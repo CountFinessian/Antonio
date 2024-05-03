@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+
+
 /**
  * Represents a single chess piece
  * <p>
@@ -11,7 +13,13 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    piece = getPiece(ChessPosition);
+    private final PieceType type;
+    private final ChessGame.TeamColor pieceColor;
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.type = type;
+        this.pieceColor = pieceColor;
+    }
     /**
      * The various different chess piece options
      */
@@ -28,14 +36,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return piece.color;
+        return this.pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return this.type;
     }
 
     /**
