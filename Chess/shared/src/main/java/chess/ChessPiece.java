@@ -61,7 +61,7 @@ public class ChessPiece {
         return switch (piece.getPieceType()) {
         case KING -> KING.calculateMoves(board, myPosition);
         case QUEEN -> QUEEN.calculateMoves(board, myPosition);
-        case BISHOP -> BISHOP.calculateMoves(board, myPosition);
+        case BISHOP -> new BISHOP().calculateMoves(board, myPosition);
         case KNIGHT -> KNIGHT.calculateMoves(board, myPosition);
         case ROOK -> ROOK.calculateMoves(board, myPosition);
         case PAWN -> PAWN.calculateMoves(board, myPosition);
@@ -69,6 +69,11 @@ public class ChessPiece {
 
 
         //switch statements on whatever your piece move calculator returns.
+    }
+
+    @Override
+    public String toString() {
+        return pieceColor + " " + type;
     }
 
     @Override
