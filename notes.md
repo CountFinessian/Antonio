@@ -15,15 +15,35 @@ JVM is the interpereter
 Get the Inteliji Idea for the Java IDE
 
 3. Why Java is portable and fast
+Compiled code: fast
+Interpreted code: portable
+
 Java is a compiled and interperted language, compiled code is portable and fast.
 The Java source code is first compiled into binary byte code, then a JRE runs the application
 So you can proablby share this binary byte code with the homies and they can run it on any JVM.
 
+Inline functions, are used when they are callled multiple times.
+C++ doesn't have heaursitc statistics
+Hotspot VM recompiles code while it's running.
+Generational garbage collection: 
+ethier need memory onetime or everytime.
+
 4. How to compile and run Java code
 By hitting the green arrow on InteliJ
-Java name is the same name as the class name MyClass and MyClass.Java
+Java name is the same name as the class name MyClass and MyClass.Java = source file, MyClass.class = executable file
 One parameter, which is a string array.
-public static void main (String...args)
+public static void main (String...args).
+
+public class SimpleJavaClass {
+	public static void main (String [] args) {
+		System.out.println("Hello BYU!);
+	}
+}
+A function that is inside of a class is a method.
+
+
+
+In Java, everything goes into a class. 
 
 5. The primitive data types available in Java
 Java has eight primitivie types: four signed integral types, two floating-point types, char and boolean.
@@ -79,7 +99,7 @@ References instead of pointers
 
 server: a program that handles network requests to play and create games.
 client: the command line program users use to create and play a game.
-shared: a code library that contains the rules and representations of a chess game
+shared: a code library that contains the rules and representations of a chess game (both client and server code.)
 
 what are object overrides inside of Java?
 For example, in class, we go. Code > Generate ... > equals() and hashCode()
@@ -118,4 +138,9 @@ Piece Moves doesn't account for pieces in it's place.
 You're supposed to overide the To string method for easier debugging
 How do I overide Code > Generate... > equals() and Hashcode()?
 
-
+Your're turning your chess board into a string to back and forth.
+What is the difference between static and non-static methods?
+//    public static void main (String[] args) {
+//       ChessPiece My_Pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+//    }
+Save Equals and Hash Code Test for Monday. Or, go to the TA labs instead.
