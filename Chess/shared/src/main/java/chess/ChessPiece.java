@@ -20,6 +20,7 @@ public class ChessPiece {
         this.type = type;
         this.pieceColor = pieceColor;
     }
+
     /**
      * The various different chess piece options
      */
@@ -54,8 +55,32 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<>();
+
+        ChessPiece piece = board.getPiece(myPosition);
+
+        return switch (piece.getPieceType()) {
+        case KING -> KING.calculateMoves(board, myPosition);
+        case QUEEN -> QUEEN.calculateMoves(board, myPosition);
+        case BISHOP -> BISHOP.calculateMoves(board, myPosition);
+        case KNIGHT -> KNIGHT.calculateMoves(board, myPosition);
+        case ROOK -> ROOK.calculateMoves(board, myPosition);
+        case PAWN -> PAWN.calculateMoves(board, myPosition);
+        };
+
 
         //switch statements on whatever your piece move calculator returns.
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return type == that.type && pieceColor == that.pieceColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, pieceColor);
     }
 }
