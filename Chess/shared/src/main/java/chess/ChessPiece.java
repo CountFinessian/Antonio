@@ -59,11 +59,11 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
 
         return switch (piece.getPieceType()) {
-        case KING -> KING.calculateMoves(board, myPosition);
+        case KING -> new KING().calculateMoves(board, myPosition);
         case QUEEN -> QUEEN.calculateMoves(board, myPosition);
         case BISHOP -> new BISHOP().calculateMoves(board, myPosition);
         case KNIGHT -> KNIGHT.calculateMoves(board, myPosition);
-        case ROOK -> ROOK.calculateMoves(board, myPosition);
+        case ROOK -> new ROOK().calculateMoves(board, myPosition);
         case PAWN -> PAWN.calculateMoves(board, myPosition);
         };
 
