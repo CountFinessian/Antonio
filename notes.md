@@ -144,3 +144,15 @@ What is the difference between static and non-static methods?
 //       ChessPiece My_Pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
 //    }
 Save Equals and Hash Code Test for Monday. Or, go to the TA labs instead.
+
+TODO
+To String for Chess Board and Piece (White is uppercase)
+ass in an arraylist of possible moves.
+
+Notes
+King can move every combination, to stop reusing code
+Pawn one step forward for middle of the board
+Pawn Piece two step forward for same color 
+
+ChessPiece.PieceType
+Got stuck, realized a pawn cannot leapfrog another player and when it reaches the end, need to return every possible promotion type.
