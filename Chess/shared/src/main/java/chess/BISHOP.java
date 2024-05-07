@@ -7,31 +7,11 @@ public class BISHOP {
     private ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
 
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition myPosition) {
-        move(board, myPosition, -1, 1);
-        move(board, myPosition, 1, -1);
-        move(board, myPosition, 1, 1);
-        move(board, myPosition, -1, -1);
+        new KNIGHT().move(board, myPosition, -1, 1, moves, false);
+        new KNIGHT().move(board, myPosition, 1, -1, moves, false);
+        new KNIGHT().move(board, myPosition, 1, 1, moves, false);
+        new KNIGHT().move(board, myPosition, -1, -1, moves, false);
         return moves;
     };
-    private void move(ChessBoard board, ChessPosition myPosition, int row_change, int col_change) {
-        int row_end = row_change + myPosition.getRow();
-        int col_end = col_change + myPosition.getColumn();
 
-        while (row_end >= 1 && row_end <= 8 && col_end >= 1 && col_end <= 8) {
-
-            ChessPosition endPosition = new ChessPosition(row_end, col_end);
-
-            if (board.getPiece(endPosition) != null){
-                if ((board.getPiece(endPosition)).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
-                    moves.addFirst(new ChessMove(myPosition, endPosition, null));
-                }
-                return;
-            }
-
-            moves.addFirst(new ChessMove(myPosition, endPosition, null));
-            row_end += row_change;
-            col_end += col_change;
-        }
-
-    };
 };
