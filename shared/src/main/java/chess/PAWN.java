@@ -7,7 +7,7 @@ import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 public class PAWN {
-    private ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+    private final ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
 
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition myPosition) {
 

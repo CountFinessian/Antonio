@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ROOK {
-    private ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+    private final ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
 
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition myPosition) {
         WASD(board, myPosition, moves, false);
