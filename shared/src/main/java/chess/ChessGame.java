@@ -1,6 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,7 +12,8 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
+    private TeamColor turn = TeamColor.WHITE;
+    private ChessBoard game = new ChessBoard();
     public ChessGame() {
 
     }
@@ -18,7 +22,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return turn;
     }
 
     /**
@@ -27,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        turn = team;
     }
 
     /**
@@ -44,9 +48,36 @@ public class ChessGame {
      * @param startPosition the piece to get valid moves for
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
+     * Takes as input a position on the chessboard and returns all moves the piece there can legally make.
+     * If there is no piece at that location, this method returns null.
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+//        game, turn
+        if (game.getPiece(startPosition) == null){
+            return null;
+        }
+
+        ChessBoard placeholderBoard = game.copy();
+        turn = game.getPiece(startPosition).getTeamColor();
+        ChessPiece.PieceType type = game.getPiece(startPosition).getPieceType();
+        ChessPiece myPiece = new ChessPiece(turn, type);
+
+
+
+//            return all possible moves which would work to get King out of check
+            Collection<ChessMove> checkedMoves = new ArrayList<>();
+            Collection<ChessMove> possibleMoves = myPiece.pieceMoves(game, startPosition);
+
+            for (ChessMove move : possibleMoves) {
+                game.removePiece(startPosition);
+                game.addPiece(move.getEndPosition(), myPiece);
+                if (!isInCheck(turn)){
+                    checkedMoves.add(move);
+                }
+                game = placeholderBoard.copy();
+                }
+            return checkedMoves;
+
     }
 
     /**
@@ -66,8 +97,46 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingsCrossing = getKing(teamColor);
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+
+                ChessPosition enemySpot = new ChessPosition(row, col);
+                if (game.getPiece(enemySpot) != null) {
+                    if (game.getPiece(enemySpot).getTeamColor() != teamColor) {
+                        ChessPiece enemyPiece = new ChessPiece(game.getPiece(enemySpot).getTeamColor(), game.getPiece(enemySpot).getPieceType());
+                        Collection<ChessMove> possibleMoves = (enemyPiece.pieceMoves(game, enemySpot));
+
+                        for (ChessMove move : possibleMoves) {
+                            if (move.getEndPosition().equals(kingsCrossing)) {
+                                return true;
+                            }
+                        }
+
+                        }
+                    }
+                }
+            }
+
+        return false;
     }
+
+    public ChessPosition getKing(TeamColor teamColor) {
+        ChessPosition kingsCrossing = null;
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                kingsCrossing = new ChessPosition(row, col);
+                if (game.getPiece(kingsCrossing) != null) {
+                    if (game.getPiece(kingsCrossing).getTeamColor() == teamColor &&
+                            game.getPiece(kingsCrossing).getPieceType() == ChessPiece.PieceType.KING) {
+                        return kingsCrossing;
+                    }
+                }
+            }
+        }
+        return kingsCrossing;
+        }
+
 
     /**
      * Determines if the given team is in checkmate
@@ -96,7 +165,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        game = board;
     }
 
     /**
@@ -105,6 +174,19 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return game;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return turn == chessGame.turn && Objects.equals(game, chessGame.game);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, game);
     }
 }

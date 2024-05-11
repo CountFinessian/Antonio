@@ -155,4 +155,154 @@ Pawn one step forward for middle of the board
 Pawn Piece two step forward for same color 
 
 ChessPiece.PieceType
-Got stuck, realized a pawn cannot leapfrog another player and when it reaches the end, need to return every possible promotion type.
+Got stuck, realized a pawn cannot leapfrog another player 
+and when it reaches the end, need to return every possible promotion type.
+
+5.6.2024 Lecuture Notes
+class is the blueprint for the house, the object is the instance.
+To create an object means allocating the space for it's variables.
+
+Create an object(instance of the class) with the new keyword, followed by a constructor invocation
+Strings and Arrays are objects, but they aren't created with a constructor.
+
+Object's get allocated in the heap
+Date dt; --> makes dt 0x123
+dt = new Date(); --> Heap goes to day: 1, month: 1, year: 2018
+dt --> it
+
+Object References do not allow pointer arithmetic.
+
+Even though the objects have the same values, becuase they have different addresses, == is false.
+equals is the same thing as == by default (reference equality) You have to write the code to do that.
+
+Instance: Each object (instance) get its own copy, ex: allows two date objects to represent different dates.
+Instance Methods: Associated with the object.
+
+Static Variables: Associated with the class and not the instance.
+Static Methods: If you're making everything static, you might as well program in c++
+If you're inside of a static method, you need to make an instance inside of youe main method which you can call.
+
+Object Oriented Programming: Classes. 
+
+Getters and Setters: 
+public class Person {
+private String firstName;
+Use right click and generate getters and Setters
+return firstName
+this.firstName = firstName
+
+public static final is a constant
+Constructers: Code executed at object creation.
+MyClass{
+public MyClass {
+x = 5;}
+}
+
+Constructers are not Inherited becuase it means you as a programmer don't lose control.
+Method Overiding:  Replaces an inherited method by redefining it. (Argument list must be the same.)
+Extends is how you use inheritance, To access class functions inside of another class.
+
+Common Methods to Override: 
+public String toString(); --> return "first name" + first name
+public boolean equals(Object obj); --> 1. type check, 2. reference check, 3. Actually checks eqaulity.
+public int hashCode(); --> if two objects are equal according to equal, the calling hashcode must produce the same integer result
+							Its not garaunteed that two unequuel objects have unequeal hashcodes.
+
+Final Keyword: Final Variables can't be changed after a value is assigned.
+public final int myVariable = 10; (eqivalent of a constant)
+public final ArrayList list = new ArrayList(); means that the reference is final.
+This refers to the current object. 
+Enum: public enum Gender {
+			Male, Female;
+			@ Override
+			public String toString().
+Chess Piece Enum. Values that are acceptable and no other values can be used. 
+
+Object-Oriented Design Overview:
+-Decompose a Progrma into Classes
+Not supposed to make a KING, QUEEN, ROOK, KNIGT, BISHOP, PAWN class.
+Something about de-cerializing. (Is-A, Has-A and Uses-A).
+
+Class Design Guidelines:
+-Keep Data private
+-Not alll fields need individual getters and Setters
+-Break up classes that have too many responsibilities.
+-Class have noun names, methods usually have verb names.
+-Use Static methods as an exception, not a general rule.
+
+Standard Class Structure:
+	public class MyClass {
+	//Static Variables
+	//Instance variables
+	//Main Method (if it exists)
+	//COnstructors
+	//Methods (gruoped by functionality)
+	
+Records:
+Automatic Getters, Equals, hashcode, toString. 
+
+Programming Exam: Uphold whole code and screensshots of test cases passing.
+Start at the same starting point as you did in Phase 0.
+Page of Notes, I want the function implimentations.
+	
+Java Collections:
+Interfaces are things that provide a signature foro a method body
+<<interace>> List (index, object), <<interface>> Set, <<interface>> Queue (order you put them in)
+
+List: A Sequence of ele,emts accessed by index.
+Linked List(Doubly-linked list implementation)
+
+Set: A collection that contains no duplicates
+add(value), contains(value), remove(value)
+
+Queue: for saving things up,
+A collection for holding elements prior to processing
+
+Deque: queue that supports insertion and removal at both ends.
+Stack (Is Deprecated): If you need a stack, use a Deque
+Removed becuase it's thread safe, which makes it slower.
+
+push() => Deque.addFirst()
+pop() => Deque.removeFirst()
+peek() => Deque.peekFirst()
+
+Map: A Collection that maps keys to values
+put(key, value), get(key), contains(key), remove(key)
+
+Each element is iterable inside of an interface.
+Override equals method to correctly use contains.
+Hash Code is used to assert equals, so change it.
+
+Sorted Collections: 
+Question: Difference between class and method
+
+Copying Object: A shallow copies the reference values to the object
+A deep copy takes those references and kaoes copies out of them.
+Copy the objects and all of the references assoicaited with it.
+
+Immutable Objects: WHen making a copy, immutable (unchangeable) objects do not need to be copied
+Strings, Integer, Boolean, Double,        Copy Constructror
+
+The reason it's safe to make a shallow copy is if the references are immuttable.
+public Object clone() {return super.clone();
+
+Deep Copy:
+Person2 clone = (Person 2) clone()
+Date cloneBirthdate = (Date) get Birthdate().clone();
+clone.setBirthdate(clonedBirthdate);
+
+Clones the person and then sets the value birthdate to new birthdate reference of same birthday.
+How would I declare a implimentation of a set iterator?
+
+Defining a class inisde of another class:
+if the class is only useful inside of that code.
+Declare things as close as possible as they're used.
+
+private static class DataStructureIterator: best placed to put the Code
+overide has next, return incremennt += 1 and set increment += 1. (next += increment)
+
+local inner class: delcare a class inside of the method that needs it.
+local inner classes can only access final or effectively final variables.
+
+return new interface() {overides}
+TODO: Videos 30:35 minutes before Monday.

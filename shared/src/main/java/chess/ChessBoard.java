@@ -25,6 +25,10 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
         squares[position.getRow()-1][position.getColumn()-1] = piece;
     }
+
+    public void removePiece(ChessPosition position ){
+        squares[position.getRow()-1][position.getColumn()-1] = null;
+    }
     /**
      * Gets a chess piece on the chessboard
      *
@@ -34,6 +38,20 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow()-1][position.getColumn()-1];
+    }
+
+    public ChessBoard copy() {
+        ChessBoard placeholderBoard = new ChessBoard();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = getPiece(position);
+                if (piece != null) {
+                    placeholderBoard.addPiece(position, piece);
+                }
+            }
+        }
+        return placeholderBoard;
     }
 
     /**
@@ -76,13 +94,19 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder board = new StringBuilder();
-        for (int row = 1; row <= 8; row++) {
+        for (int row = 8; row >= 1; row--) {
+            board.append("|");
             for (int col = 1; col <= 8; col++) {
                 ChessPiece piece = getPiece(new ChessPosition(row, col));
                 if (piece == null) {
-                    board.append("- ");
+                    board.append(" |");
                 } else {
-                    board.append(piece.toString()).append(" ");
+                    // Represent white pieces in uppercase, black pieces in lowercase
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        board.append(piece.toString().toUpperCase()).append("|");
+                    } else {
+                        board.append(piece.toString().toLowerCase()).append("|");
+                    }
                 }
             }
             board.append("\n");
