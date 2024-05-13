@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
+
     public ChessBoard() {
 
     }
@@ -52,6 +53,19 @@ public class ChessBoard {
             }
         }
         return placeholderBoard;
+    }
+
+    public boolean emptyBoard() {
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = getPiece(position);
+                if (piece != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

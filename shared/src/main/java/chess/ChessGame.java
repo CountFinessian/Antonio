@@ -87,9 +87,37 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
-    }
+        if (game.emptyBoard()){
+            game.resetBoard();
+        }
 
+        ChessPiece myPiece = game.getPiece(move.getStartPosition());
+        if (myPiece == null){
+            throw new InvalidMoveException();
+        }
+        if (myPiece.getTeamColor() != turn){
+            throw new InvalidMoveException();
+        }
+        Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
+        for (ChessMove possibleMove : possibleMoves) {
+
+            if (move.equals(possibleMove)) {
+                game.removePiece(move.getStartPosition());
+
+                if (move.getPromotionPiece() == null) {
+                    game.addPiece(move.getEndPosition(), myPiece);
+                }
+                else {
+                    ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
+                    game.addPiece(move.getEndPosition(), promotionPiece);
+                }
+                turnt();
+                return;
+
+            }
+        }
+        throw new InvalidMoveException();
+    }
     /**
      * Determines if the given team is in check
      *
@@ -98,6 +126,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingsCrossing = getKing(teamColor);
+        if (kingsCrossing == null){
+            return false;
+        }
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
 
@@ -121,11 +152,18 @@ public class ChessGame {
         return false;
     }
 
+    public void turnt (){
+        if (turn == TeamColor.BLACK){
+            turn = TeamColor.WHITE;
+        }
+        else { turn = TeamColor.BLACK;
+        }
+    }
     public ChessPosition getKing(TeamColor teamColor) {
-        ChessPosition kingsCrossing = null;
+
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                kingsCrossing = new ChessPosition(row, col);
+                ChessPosition kingsCrossing = new ChessPosition(row, col);
                 if (game.getPiece(kingsCrossing) != null) {
                     if (game.getPiece(kingsCrossing).getTeamColor() == teamColor &&
                             game.getPiece(kingsCrossing).getPieceType() == ChessPiece.PieceType.KING) {
@@ -134,7 +172,7 @@ public class ChessGame {
                 }
             }
         }
-        return kingsCrossing;
+        return null;
         }
 
 
@@ -165,7 +203,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        game = board;
+        game = board.copy();
     }
 
     /**
