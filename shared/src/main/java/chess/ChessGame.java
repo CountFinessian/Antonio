@@ -10,6 +10,8 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
+
+//Phase 1 Finished
 public class ChessGame {
     private TeamColor turn = TeamColor.WHITE;
     private ChessBoard game = new ChessBoard();
