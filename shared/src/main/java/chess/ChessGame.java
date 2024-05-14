@@ -52,6 +52,7 @@ public class ChessGame {
      * If there is no piece at that location, this method returns null.
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        boardRefill();
 //        game, turn
         if (game.getPiece(startPosition) == null) {
             return null;
@@ -75,11 +76,9 @@ public class ChessGame {
             }
             game = placeholderBoard.copy();
         }
-        if (checkedMoves.isEmpty()) {
-            return null;
-        } else {
-            return checkedMoves;
-        }
+
+        return checkedMoves;
+
 
     }
 
@@ -90,9 +89,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (game.emptyBoard()) {
-            game.resetBoard();
-        }
+        boardRefill();
 
         ChessPiece myPiece = game.getPiece(move.getStartPosition());
         if (myPiece == null) {
@@ -187,6 +184,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        boardRefill();
         if (isInCheck(teamColor)) {
             return !removeCheck(teamColor);
         }
@@ -201,6 +199,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        boardRefill();
         if (isInCheck(teamColor)){
             return false;
         }
@@ -218,7 +217,7 @@ public class ChessGame {
                 ChessPosition myPiece = new ChessPosition(row, col);
                 if (game.getPiece(myPiece) != null) {
                     if (game.getPiece(myPiece).getTeamColor() == teamColor) {
-                        if (validMoves(myPiece) != null){
+                        if (!validMoves(myPiece).isEmpty()){
                             return true;
                         }
                     }
@@ -233,6 +232,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
+        boardRefill();
         game = board.copy();
     }
 
@@ -242,7 +242,14 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
+        boardRefill();
         return game;
+    }
+
+    public void boardRefill(){
+        if (game.emptyBoard()) {
+            game.resetBoard();
+        }
     }
 
     @Override
