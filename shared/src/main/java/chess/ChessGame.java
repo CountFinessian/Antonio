@@ -14,6 +14,7 @@ import java.util.Objects;
 public class ChessGame {
     private TeamColor turn = TeamColor.WHITE;
     private ChessBoard game = new ChessBoard();
+    private Castling castle = new Castling();
 
     public ChessGame() {
 
@@ -226,6 +227,7 @@ public class ChessGame {
         }
         return true;
     }
+
 
     /**
      * Sets this game's chessboard with a given board
