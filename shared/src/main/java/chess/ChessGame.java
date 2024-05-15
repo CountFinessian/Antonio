@@ -11,7 +11,6 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 
-//Phase 1 Finished
 public class ChessGame {
     private TeamColor turn = TeamColor.WHITE;
     private ChessBoard game = new ChessBoard();
@@ -65,23 +64,20 @@ public class ChessGame {
         ChessPiece.PieceType type = game.getPiece(startPosition).getPieceType();
         ChessPiece myPiece = new ChessPiece(color, type);
 
-
-//            return all possible moves which would work to get King out of check
         Collection<ChessMove> checkedMoves = new ArrayList<>();
         Collection<ChessMove> possibleMoves = myPiece.pieceMoves(game, startPosition);
 
         for (ChessMove move : possibleMoves) {
             game.removePiece(startPosition);
             game.addPiece(move.getEndPosition(), myPiece);
+            // return all possible moves which would work to get King out of check
             if (!isInCheck(color)) {
                 checkedMoves.add(move);
             }
             game = placeholderBoard.copy();
+            // revert the board back to its original position.
         }
-
         return checkedMoves;
-
-
     }
 
     /**
@@ -100,6 +96,7 @@ public class ChessGame {
         if (myPiece.getTeamColor() != turn) {
             throw new InvalidMoveException();
         }
+
         Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
         for (ChessMove possibleMove : possibleMoves) {
 
@@ -114,7 +111,6 @@ public class ChessGame {
                 }
                 turnt();
                 return;
-
             }
         }
         throw new InvalidMoveException();
@@ -135,8 +131,10 @@ public class ChessGame {
             for (int col = 1; col <= 8; col++) {
 
                 ChessPosition enemySpot = new ChessPosition(row, col);
+
                 if (game.getPiece(enemySpot) != null) {
                     if (game.getPiece(enemySpot).getTeamColor() != teamColor) {
+
                         ChessPiece enemyPiece = new ChessPiece(game.getPiece(enemySpot).getTeamColor(), game.getPiece(enemySpot).getPieceType());
                         Collection<ChessMove> possibleMoves = (enemyPiece.pieceMoves(game, enemySpot));
 
@@ -166,8 +164,10 @@ public class ChessGame {
 
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
+
                 ChessPosition kingsCrossing = new ChessPosition(row, col);
                 if (game.getPiece(kingsCrossing) != null) {
+
                     if (game.getPiece(kingsCrossing).getTeamColor() == teamColor &&
                             game.getPiece(kingsCrossing).getPieceType() == ChessPiece.PieceType.KING) {
                         return kingsCrossing;
@@ -188,7 +188,7 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         boardRefill();
         if (isInCheck(teamColor)) {
-            return !removeCheck(teamColor);
+            return stuckPiece(teamColor);
         }
         return false;
     }
@@ -202,39 +202,37 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         boardRefill();
-        if (isInCheck(teamColor)){
+        if (isInCheck(teamColor)) {
             return false;
         }
-        if (removeCheck(teamColor)){
-            return false;
-        }
-        else {
-            return true;
-        }
+        return stuckPiece(teamColor);
     }
 
-    public boolean removeCheck(TeamColor teamColor){
+    public boolean stuckPiece(TeamColor teamColor) {
+
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
+
                 ChessPosition myPiece = new ChessPosition(row, col);
                 if (game.getPiece(myPiece) != null) {
+
                     if (game.getPiece(myPiece).getTeamColor() == teamColor) {
-                        if (!validMoves(myPiece).isEmpty()){
-                            return true;
+                        if (!validMoves(myPiece).isEmpty()) {
+                            return false;
                         }
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
+
     /**
      * Sets this game's chessboard with a given board
      *
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        boardRefill();
         game = board.copy();
     }
 
@@ -248,10 +246,18 @@ public class ChessGame {
         return game;
     }
 
-    public void boardRefill(){
+    public void boardRefill() {
         if (game.emptyBoard()) {
             game.resetBoard();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "turn=" + turn +
+                ", game=" + game +
+                '}';
     }
 
     @Override
