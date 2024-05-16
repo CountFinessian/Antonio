@@ -78,6 +78,11 @@ public class ChessGame {
             game = placeholderBoard.copy();
             // revert the board back to its original position.
         }
+        if (myPiece.getPieceType() == ChessPiece.PieceType.KING){
+            if (!isInCheck(color)) {
+                return castle.castler(game, checkedMoves, myPiece);
+            }
+        }
         return checkedMoves;
     }
 

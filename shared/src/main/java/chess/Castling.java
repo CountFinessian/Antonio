@@ -47,4 +47,27 @@ public class Castling {
         }
     }
 
+    public Collection<ChessMove> castler (ChessBoard board, Collection<ChessMove> possibleMoves, ChessPiece myKing) {
+        if (myKing.getTeamColor() == ChessGame.TeamColor.WHITE){
+            if (WK){
+                if(WQR){
+                    if (emptyCheck(board, 1, 2)){
+                        if (emptyCheck(board, 1, 3)){
+                            if (emptyCheck(board, 1, 4)){
+
+                            }
+                        }
+                    }
+                }
+                if(WKR){
+
+                }
+            }
+        }
+    }
+
+    private boolean emptyCheck(ChessBoard board, int row, int col){
+        ChessPosition empty = new ChessPosition(row,col);
+        return board.getPiece(empty) == null;
+    }
 };
