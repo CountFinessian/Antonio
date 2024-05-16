@@ -83,19 +83,19 @@ public class ChessGame {
                 switch (castle.castlerEmpty(game, turn)) {
                     case 1:
                         // Code for case when the result is 1
-                        System.out.println("Result is 1");
+                        System.out.println("Can castle on the left side");
                         break;
                     case 2:
                         // Code for case when the result is 2
-                        System.out.println("Result is 2");
+                        System.out.println("Can castle on the right side");
                         break;
                     case 3:
                         // Code for case when the result is 3
-                        System.out.println("Result is 3");
+                        System.out.println("Can castle on both sides");
                         break;
                     default:
                         // Code for all other cases
-                        System.out.println("Result is not 1, 2, or 3");
+                        System.out.println("Castling is not available");
                         break;
                 }
             }
