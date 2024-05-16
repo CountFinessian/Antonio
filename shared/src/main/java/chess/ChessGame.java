@@ -110,6 +110,7 @@ public class ChessGame {
                     ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
                     game.addPiece(move.getEndPosition(), promotionPiece);
                 }
+                castle.occupied(game);
                 turnt();
                 return;
             }

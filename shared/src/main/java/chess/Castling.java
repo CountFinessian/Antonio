@@ -28,12 +28,23 @@ public class Castling {
 
 
     public void occupied(ChessBoard board) {
-        if (board.getPiece(BQRP) == null){
-            BQR = false;
-        }
-        else if (board.getPiece(BKP) != BRPiece){
-            BQR = false;
-        }
+
+        occupiedHelper(board, BQRP, BRPiece, BQR);
+        occupiedHelper(board, BKP, BKPiece, BK);
+        occupiedHelper(board, BKRP, BRPiece, BKR);
+
+        occupiedHelper(board, WQRP, WRPiece, WQR);
+        occupiedHelper(board, WKP, WKPiece, WK);
+        occupiedHelper(board, WKRP, WRPiece, WKR);
+
     };
+    private void occupiedHelper(ChessBoard board, ChessPosition place, ChessPiece piece, boolean setter){
+        if (board.getPiece(place) == null){
+            setter = false;
+        }
+        else if (board.getPiece(place) != piece){
+            setter = false;
+        }
+    }
 
 };
