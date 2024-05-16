@@ -47,27 +47,42 @@ public class Castling {
         }
     }
 
-    public Collection<ChessMove> castler (ChessBoard board, Collection<ChessMove> possibleMoves, ChessPiece myKing) {
-        if (myKing.getTeamColor() == ChessGame.TeamColor.WHITE){
-            if (WK){
-                if(WQR){
-                    if (emptyCheck(board, 1, 2)){
-                        if (emptyCheck(board, 1, 3)){
-                            if (emptyCheck(board, 1, 4)){
-
-                            }
-                        }
-                    }
-                }
-                if(WKR){
-
-                }
-            }
+    public int castlerEmpty (ChessBoard board, ChessGame.TeamColor kingColor) {
+        if (kingColor == ChessGame.TeamColor.BLACK){
+            return emptyCount(board, 8, BQR, BK, BKR);
         }
+        else return emptyCount(board, 8, WQR, WK, WKR);
     }
 
     private boolean emptyCheck(ChessBoard board, int row, int col){
         ChessPosition empty = new ChessPosition(row,col);
         return board.getPiece(empty) == null;
     }
+
+
+    private int emptyCount(ChessBoard board, int row, boolean left, boolean middle, boolean right) {
+        int emptyCount = 0;
+        if (middle) {
+            if (left) {
+                if (emptyCheck(board, row, 2)) {
+                    if (emptyCheck(board, row, 3)) {
+                        if (emptyCheck(board, row, 4)) {
+                            emptyCount += 1;
+                        }
+                    }
+                }
+            }
+            if (right) {
+                if (emptyCheck(board, row, 6)) {
+                    if (emptyCheck(board, row, 7)) {
+                        emptyCount += 2;
+                    }
+                }
+
+            }
+        }
+        return emptyCount;
+    }
+
+
 };

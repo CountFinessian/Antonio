@@ -80,7 +80,24 @@ public class ChessGame {
         }
         if (myPiece.getPieceType() == ChessPiece.PieceType.KING){
             if (!isInCheck(color)) {
-                return castle.castler(game, checkedMoves, myPiece);
+                switch (castle.castlerEmpty(game, turn)) {
+                    case 1:
+                        // Code for case when the result is 1
+                        System.out.println("Result is 1");
+                        break;
+                    case 2:
+                        // Code for case when the result is 2
+                        System.out.println("Result is 2");
+                        break;
+                    case 3:
+                        // Code for case when the result is 3
+                        System.out.println("Result is 3");
+                        break;
+                    default:
+                        // Code for all other cases
+                        System.out.println("Result is not 1, 2, or 3");
+                        break;
+                }
             }
         }
         return checkedMoves;
