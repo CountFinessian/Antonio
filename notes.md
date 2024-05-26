@@ -394,3 +394,30 @@ shared/src/main/java/model.
 Shelter Saturday
 Suntan Sunday
 Maniac Monday
+
+A postive test case is one which the action happens successfully.
+A negative test case is one where whuch the operation fails.
+
+Cannot resolve symbol 'spark'
+import chess;
+how to run it to display on a port?
+
+
+How do we know where our path is?
+
+DO you think I need an exception handler?
+What is AuthToken even used for?
+How do I store the data?
+
+How do the mechanics of an auth token work?
+I'm still confused about Auth Tokens.
+Are there going to be multiple Auth's or just one when using login and register?
+How is res being returned to record class inside of RegisterResponse?
+
+Test Case Tuesday.
+If UserData is Populated (Make a Method). Return True;
+Work on Clear
+Everytime you login, you creatAuth.
+
+need to getAuth when joining the game.
+Logging in and Registerring Create two different Auth tokens.
