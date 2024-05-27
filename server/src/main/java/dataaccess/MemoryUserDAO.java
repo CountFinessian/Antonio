@@ -19,7 +19,7 @@ public class MemoryUserDAO implements UserDAO {
         return users.get(user);
     }
 
-    public void removeUser(AuthData userAuth) throws DataAccessException {
-        users.remove(userAuth.username());
+    public void clearUsers () throws DataAccessException {
+        users.clear();
     }
 }

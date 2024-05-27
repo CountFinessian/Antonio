@@ -16,7 +16,7 @@ public class UserService {
         return UserAccess.getUser(user);
     }
 
-    public void removeUser(AuthData userauth) throws DataAccessException {
-        UserAccess.removeUser(userauth);
+    public void clearUsers() throws DataAccessException {
+        UserAccess.clearUsers();
     }
 }

@@ -12,7 +12,7 @@ public class MemoryGameDAO implements GameDAO {
     final static private List<GameData> gamesList = new ArrayList<>();
 
     public GameData createGame(String gameName) {
-        Integer gameID = games.size() + 1;
+        Integer gameID = games.size();
         GameData game = new GameData(gameID,"", "", gameName, new ChessGame());
         games.put(gameID, game);
         return game;
@@ -44,6 +44,10 @@ public class MemoryGameDAO implements GameDAO {
                 break;
         }
         return true;
+    }
+
+    public void clearGames () throws DataAccessException {
+        games.clear();
     }
 }
 

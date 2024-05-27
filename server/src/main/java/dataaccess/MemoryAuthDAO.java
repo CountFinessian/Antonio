@@ -25,6 +25,9 @@ public class MemoryAuthDAO implements AuthDAO {
     public AuthData getAuth(String authToken) {
         return auths.get(authToken);
     }
+    public void clearAuths () throws DataAccessException {
+        auths.clear();
+    }
     }
 
 

@@ -9,6 +9,7 @@ import service.*;
 
 import spark.*;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 public class Server {
@@ -29,6 +30,8 @@ public class Server {
         Spark.get("/game", this::listGames);
 
         Spark.put("/game", this::joinGame);
+
+        Spark.delete("/db", this::deleteDatabase);
         Spark.awaitInitialization();
 
         return Spark.port();
@@ -176,6 +179,20 @@ public class Server {
             res.status(400);
             RegistrationError registerReturn = new RegistrationError("Error: bad request");
             return new Gson().toJson(registerReturn);
+        }
+
+        private Object deleteDatabase( Request req, Response res) throws DataAccessException {
+            AuthService authservice = new AuthService(new MemoryAuthDAO());
+            GameService gameservice = new GameService(new MemoryGameDAO());
+            UserService userservice = new UserService(new MemoryUserDAO());
+
+            authservice.clearAuths();
+            gameservice.clearGames();
+            userservice.clearUsers();
+
+            res.status(200);
+            JsonObject emptyJsonObject = new JsonObject();
+            return new Gson().toJson(emptyJsonObject);
         }
 
     private AuthData authenticator(Request req) throws DataAccessException {

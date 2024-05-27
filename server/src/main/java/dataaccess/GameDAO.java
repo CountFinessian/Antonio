@@ -8,4 +8,5 @@ public interface GameDAO {
     GameData createGame (String gameName) throws DataAccessException;
     List<GameData> getAllGames() throws DataAccessException;
     Boolean joinGame(String username, String color, Integer gameId);
+    void clearGames () throws DataAccessException;
 }
