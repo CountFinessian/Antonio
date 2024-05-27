@@ -4,11 +4,12 @@ import RequestResponse.*;
 
 import com.google.gson.JsonObject;
 import dataaccess.*;
-import model.AuthData;
-import model.UserData;
+import model.*;
 import service.*;
 
 import spark.*;
+
+import java.util.List;
 
 public class Server {
 
@@ -22,6 +23,10 @@ public class Server {
         Spark.post("/session", this::loginUser);
 
         Spark.delete("/session", this::deleteUser);
+
+        Spark.post("/game", this::createGame);
+
+        Spark.get("/game", this::listGames);
         Spark.awaitInitialization();
 
         return Spark.port();
@@ -93,8 +98,44 @@ public class Server {
                 RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
             }
 
+            res.status(200);
             JsonObject emptyJsonObject = new JsonObject();
             return new Gson().toJson(emptyJsonObject);
+        }
+
+        private Object createGame( Request req, Response res ) throws DataAccessException {
+            String authToken = req.headers("Authorization");
+            MakeGameRequest makegamerequest = new Gson().fromJson(req.body(), MakeGameRequest.class);
+            String gameName = makegamerequest.gameName();
+
+            AuthService authservice = new AuthService(new MemoryAuthDAO());
+            AuthData myAuth = authservice.getAuth(authToken);
+            if (myAuth == null) {
+                res.status(401);
+                RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
+            }
+
+            GameService gameservice = new GameService(new MemoryGameDAO());
+            GameData newGame = gameservice.createGame(gameName);
+            MakeGameResponse makegameresponse = new MakeGameResponse(newGame.gameID());
+            res.status(200);
+            return new Gson().toJson(makegameresponse);
+        }
+
+        private Object listGames ( Request req, Response res ) throws DataAccessException {
+            String authToken = req.headers("Authorization");
+            AuthService authservice = new AuthService(new MemoryAuthDAO());
+            AuthData myAuth = authservice.getAuth(authToken);
+            if (myAuth == null) {
+                res.status(401);
+                RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
+            }
+            GameService gameservice = new GameService(new MemoryGameDAO());
+            List<GameData> allGames = gameservice.getAllGames();
+
+            GetAllGamesResponse getallgamesresponse = new GetAllGamesResponse(allGames);
+            res.status(200);
+            return new Gson().toJson(getallgamesresponse);
         }
 
 
