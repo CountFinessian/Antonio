@@ -13,8 +13,8 @@ public class AuthService {
     public AuthData createAuth(UserData user) throws DataAccessException {
         return AuthAccess.createAuth(user);
     }
-    public AuthData logoutAuth(String authToken) throws DataAccessException {
-        return AuthAccess.logoutAuth(authToken);
+    public void logoutAuth(String authToken) throws DataAccessException {
+        AuthAccess.logoutAuth(authToken);
     }
     public AuthData getAuth(String authToken) throws DataAccessException {
         return AuthAccess.getAuth(authToken);

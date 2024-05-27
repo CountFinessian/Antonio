@@ -12,7 +12,7 @@ public class UserService {
         return UserAccess.createUser(user);
     }
 
-    public UserData getUser(UserData user) throws DataAccessException {
+    public UserData getUser(String user) throws DataAccessException {
         return UserAccess.getUser(user);
     }
 

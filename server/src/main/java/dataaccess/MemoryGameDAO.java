@@ -22,6 +22,28 @@ public class MemoryGameDAO implements GameDAO {
         gamesList.clear();
         gamesList.addAll(games.values());
         return gamesList;
+    }
 
+    public Boolean joinGame(String username, String color, Integer gameID) {
+        GameData game = games.get(gameID);
+        GameData newGame;
+        switch (color) {
+            case "WHITE":
+                if (!game.whiteUsername().isEmpty()) {
+                    return false;
+                }
+                newGame = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
+                games.put(gameID, newGame);
+                break;
+            case "BLACK":
+                if (!game.blackUsername().isEmpty()) {
+                    return false;
+                }
+                newGame = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
+                games.put(gameID, newGame);
+                break;
+        }
+        return true;
     }
 }
+

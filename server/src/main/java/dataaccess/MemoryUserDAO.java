@@ -15,8 +15,8 @@ public class MemoryUserDAO implements UserDAO {
         return user;
     }
 
-    public UserData getUser(UserData user) {
-        return users.get(user.username());
+    public UserData getUser(String user) {
+        return users.get(user);
     }
 
     public void removeUser(AuthData userAuth) throws DataAccessException {

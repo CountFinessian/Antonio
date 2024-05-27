@@ -27,6 +27,8 @@ public class Server {
         Spark.post("/game", this::createGame);
 
         Spark.get("/game", this::listGames);
+
+        Spark.put("/game", this::joinGame);
         Spark.awaitInitialization();
 
         return Spark.port();
@@ -46,15 +48,15 @@ public class Server {
             RegistrationError registerReturn = new RegistrationError("Error: bad request");
             return new Gson().toJson(registerReturn);
         }
-        UserData userdata = new UserData(user.username(), user.password(), user.email());
-        UserService userservice = new UserService(new MemoryUserDAO());
 
-        if (userservice.getUser(userdata) != null){
+        UserService userservice = new UserService(new MemoryUserDAO());
+        if (userservice.getUser(user.username()) != null){
             res.status(403);
             RegistrationError registerReturn = new RegistrationError("Error: already taken");
             return new Gson().toJson(registerReturn);
         }
 
+        UserData userdata = new UserData(user.username(), user.password(), user.email());
         UserData createdUser = userservice.createUser(userdata);
 
         AuthService authservice = new AuthService(new MemoryAuthDAO());
@@ -68,11 +70,10 @@ public class Server {
     private Object loginUser( Request req, Response res ) throws DataAccessException {
         LoginRequest user = new Gson().fromJson(req.body(), LoginRequest.class);
 
-        UserData userdata = new UserData(user.username(), user.password(), "chicken.com");
         UserService userservice = new UserService(new MemoryUserDAO());
-        UserData checkUserData = userservice.getUser(userdata);
+        UserData checkUserData = userservice.getUser(user.username());
 
-        if (checkUserData == null || !userdata.password().equals(checkUserData.password())) {
+        if (checkUserData == null || !user.password().equals(checkUserData.password())) {
             res.status(401);
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
             return new Gson().toJson(registerReturn);
@@ -87,16 +88,16 @@ public class Server {
 
         }
         private Object deleteUser( Request req, Response res ) throws DataAccessException {
-            String authToken = req.headers("Authorization");
 
+            AuthData auth = authenticator(req);
+            if (auth == null) {
+                res.status(401);
+                RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
+                return new Gson().toJson(registerReturn);
+            }
 
             AuthService authservice = new AuthService(new MemoryAuthDAO());
-            AuthData deletedAuth = authservice.logoutAuth(authToken);
-
-            if (deletedAuth == null) {
-                   res.status(401);
-                RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
-            }
+            authservice.logoutAuth(auth.authToken());
 
             res.status(200);
             JsonObject emptyJsonObject = new JsonObject();
@@ -104,17 +105,15 @@ public class Server {
         }
 
         private Object createGame( Request req, Response res ) throws DataAccessException {
-            String authToken = req.headers("Authorization");
-            MakeGameRequest makegamerequest = new Gson().fromJson(req.body(), MakeGameRequest.class);
-            String gameName = makegamerequest.gameName();
 
-            AuthService authservice = new AuthService(new MemoryAuthDAO());
-            AuthData myAuth = authservice.getAuth(authToken);
-            if (myAuth == null) {
+            if (authenticator(req) == null){
                 res.status(401);
                 RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
+                return new Gson().toJson(registerReturn);
             }
 
+            MakeGameRequest makegamerequest = new Gson().fromJson(req.body(), MakeGameRequest.class);
+            String gameName = makegamerequest.gameName();
             GameService gameservice = new GameService(new MemoryGameDAO());
             GameData newGame = gameservice.createGame(gameName);
             MakeGameResponse makegameresponse = new MakeGameResponse(newGame.gameID());
@@ -123,13 +122,12 @@ public class Server {
         }
 
         private Object listGames ( Request req, Response res ) throws DataAccessException {
-            String authToken = req.headers("Authorization");
-            AuthService authservice = new AuthService(new MemoryAuthDAO());
-            AuthData myAuth = authservice.getAuth(authToken);
-            if (myAuth == null) {
+            if (authenticator(req) == null){
                 res.status(401);
                 RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
+                return new Gson().toJson(registerReturn);
             }
+
             GameService gameservice = new GameService(new MemoryGameDAO());
             List<GameData> allGames = gameservice.getAllGames();
 
@@ -138,5 +136,52 @@ public class Server {
             return new Gson().toJson(getallgamesresponse);
         }
 
+        private Object joinGame( Request req, Response res ) throws DataAccessException {
 
+            JoinGameRequest joingamerequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
+            GameService gameservice = new GameService(new MemoryGameDAO());
+            List<GameData> allGames = gameservice.getAllGames();
+
+            for (GameData game : allGames) {
+
+                if (game.gameID() == joingamerequest.gameID()) {
+                    if (joingamerequest.playerColor().equals("WHITE") || joingamerequest.playerColor().equals("BLACK")) {
+
+                        AuthData auth = authenticator(req);
+                        if (auth == null) {
+                            res.status(401);
+                            RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
+                            return new Gson().toJson(registerReturn);
+                        }
+                        Boolean joinedGame = gameservice.joinGame(auth.username(), joingamerequest.playerColor(), joingamerequest.gameID());
+                        if (joinedGame) {
+                            res.status(200);
+                            JsonObject emptyJsonObject = new JsonObject();
+                            return new Gson().toJson(emptyJsonObject);
+                        }
+                        else{
+                            res.status(403);
+                            RegistrationError registerReturn = new RegistrationError("Error: already taken");
+                            return new Gson().toJson(registerReturn);
+                        }
+                    }
+                    else{
+                        res.status(400);
+                        RegistrationError registerReturn = new RegistrationError("Error: bad request");
+                        return new Gson().toJson(registerReturn);
+                    }
+                }
+            }
+
+            res.status(400);
+            RegistrationError registerReturn = new RegistrationError("Error: bad request");
+            return new Gson().toJson(registerReturn);
+        }
+
+    private AuthData authenticator(Request req) throws DataAccessException {
+        String authToken = req.headers("Authorization");
+        AuthService authservice = new AuthService(new MemoryAuthDAO());
+        AuthData myAuth = authservice.getAuth(authToken);
+        return myAuth;
     }
+}

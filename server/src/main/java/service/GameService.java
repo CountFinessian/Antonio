@@ -19,6 +19,9 @@ public class GameService {
     public List<GameData> getAllGames() throws DataAccessException {
         return GameAccess.getAllGames();
     }
+    public Boolean joinGame(String username, String color, Integer gameID) throws DataAccessException {
+        return GameAccess.joinGame(username, color, gameID);
+    }
 
 }
 
