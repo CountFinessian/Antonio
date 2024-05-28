@@ -142,7 +142,6 @@ public class Server {
     }
 
     private Object joinGame(Request req, Response res) throws DataAccessException {
-
         JoinGameRequest joingamerequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
 
         if (joingamerequest.gameID() == null || joingamerequest.playerColor() == null) {
@@ -175,7 +174,6 @@ public class Server {
             authservice.clearAuths();
             gameservice.clearGames();
             userservice.clearUsers();
-
             res.status(200);
             JsonObject emptyJsonObject = new JsonObject();
             return new Gson().toJson(emptyJsonObject);
