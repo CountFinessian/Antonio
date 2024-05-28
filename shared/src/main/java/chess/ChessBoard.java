@@ -1,6 +1,5 @@
 package chess;
 
-import javax.swing.text.Position;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -92,16 +91,16 @@ public class ChessBoard {
         addPiece(new ChessPosition (8, 6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition (8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition (8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
-        pawn_layer(7, ChessGame.TeamColor.BLACK);
-        pawn_layer(2, ChessGame.TeamColor.WHITE);
+        pawnlayer(7, ChessGame.TeamColor.BLACK);
+        pawnlayer(2, ChessGame.TeamColor.WHITE);
     }
 
-    private void pawn_layer (int row, ChessGame.TeamColor teamColor){
-        ChessPiece Piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
+    private void pawnlayer (int row, ChessGame.TeamColor teamColor){
+        ChessPiece piecey = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
 
         for (int i = 1; i <= 8; i++)
         {
-            addPiece(new ChessPosition(row, i), Piece);
+            addPiece(new ChessPosition(row, i), piecey);
         }
     };
 

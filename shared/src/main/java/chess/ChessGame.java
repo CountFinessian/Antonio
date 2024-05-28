@@ -14,7 +14,6 @@ import java.util.Objects;
 public class ChessGame {
     private TeamColor turn = TeamColor.WHITE;
     private ChessBoard game = new ChessBoard();
-    private Castling castle = new Castling();
 
     public ChessGame() {
 
@@ -78,28 +77,7 @@ public class ChessGame {
             game = placeholderBoard.copy();
             // revert the board back to its original position.
         }
-        if (myPiece.getPieceType() == ChessPiece.PieceType.KING){
-            if (!isInCheck(color)) {
-                switch (castle.castlerEmpty(game, turn)) {
-                    case 1:
-                        // Code for case when the result is 1
-                        System.out.println("Can castle on the left side");
-                        break;
-                    case 2:
-                        // Code for case when the result is 2
-                        System.out.println("Can castle on the right side");
-                        break;
-                    case 3:
-                        // Code for case when the result is 3
-                        System.out.println("Can castle on both sides");
-                        break;
-                    default:
-                        // Code for all other cases
-                        System.out.println("Castling is not available");
-                        break;
-                }
-            }
-        }
+
         return checkedMoves;
     }
 
@@ -132,7 +110,6 @@ public class ChessGame {
                     ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
                     game.addPiece(move.getEndPosition(), promotionPiece);
                 }
-                castle.occupied(game);
                 turnt();
                 return;
             }

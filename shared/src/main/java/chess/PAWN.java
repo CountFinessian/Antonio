@@ -3,7 +3,6 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 public class PAWN {
@@ -29,34 +28,34 @@ public class PAWN {
 
         return moves;
     };
-    private void move(ChessBoard board, ChessPosition myPosition, int row_change, int col_change) {
-        int row_end = row_change + myPosition.getRow();
-        int col_end = col_change + myPosition.getColumn();
+    private void move(ChessBoard board, ChessPosition myPosition, int rowchange, int colchange) {
+        int rowend = rowchange + myPosition.getRow();
+        int colend = colchange + myPosition.getColumn();
 
-        if (row_end >= 1 && row_end <= 8 && col_end >= 1 && col_end <= 8) {
+        if (rowend >= 1 && rowend <= 8 && colend >= 1 && colend <= 8) {
 
-            if (row_change == 2){
-                ChessPosition sandwich = new ChessPosition(1 + myPosition.getRow(), col_end);
+            if (rowchange == 2){
+                ChessPosition sandwich = new ChessPosition(1 + myPosition.getRow(), colend);
                 if (board.getPiece(sandwich) != null){
                     return;
                 }
             }
 
-            if (row_change == -2){
-                ChessPosition sandwich = new ChessPosition(-1 + myPosition.getRow(), col_end);
+            if (rowchange == -2){
+                ChessPosition sandwich = new ChessPosition(-1 + myPosition.getRow(), colend);
                 if (board.getPiece(sandwich) != null){
                     return;
                 }
             }
 
 
-            ChessPosition endPosition = new ChessPosition(row_end, col_end);
+            ChessPosition endPosition = new ChessPosition(rowend, colend);
 
             if (board.getPiece(endPosition) != null){
                 return;
             }
 
-            if (row_end == 1 || row_end == 8) {
+            if (rowend == 1 || rowend == 8) {
                 promotion(myPosition, endPosition);
             }
            else  moves.addFirst(new ChessMove(myPosition, endPosition, null));
@@ -65,17 +64,17 @@ public class PAWN {
 
     }
 
-    private void attack(ChessBoard board, ChessPosition myPosition, int row_change, int col_change) {
-        int row_end = row_change + myPosition.getRow();
-        int col_end = col_change + myPosition.getColumn();
+    private void attack(ChessBoard board, ChessPosition myPosition, int rowchange, int colchange) {
+        int rowend = rowchange + myPosition.getRow();
+        int colend = colchange + myPosition.getColumn();
 
-        if (row_end >= 1 && row_end <= 8 && col_end >= 1 && col_end <= 8) {
+        if (rowend >= 1 && rowend <= 8 && colend >= 1 && colend <= 8) {
 
-            ChessPosition endPosition = new ChessPosition(row_end, col_end);
+            ChessPosition endPosition = new ChessPosition(rowend, colend);
 
             if (board.getPiece(endPosition) != null){
                 if ((board.getPiece(endPosition)).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
-                    if (row_end == 1 || row_end == 8) {
+                    if (rowend == 1 || rowend == 8) {
                         promotion(myPosition, endPosition);
                     }
                     else  moves.addFirst(new ChessMove(myPosition, endPosition, null));

@@ -1,18 +1,10 @@
 package service;
-import RequestResponse.RegisterRequest;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import passoff.model.TestUser;
-import passoff.server.TestServerFacade;
-
-import server.Server;
 
 import java.util.List;
 
@@ -31,29 +23,29 @@ class UnitTests {
     }
 
     @Test
-    void Register() {
-        var LoginIdentity = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNull(LoginIdentity);
+    void register() {
+        var loginidentity = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
+        assertNull(loginidentity);
 
-        var LoginResult = assertDoesNotThrow(() -> userservice.createUser(user));
-        assertEquals("JAWILL", LoginResult.username());
+        var loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        assertEquals("JAWILL", loginresult.username());
 
-        var LoginIdentity2 = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNotNull(LoginIdentity2);
+        var loginidentity2 = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
+        assertNotNull(loginidentity2);
 
-        var LoginResult2 = assertDoesNotThrow(() -> userservice.createUser(user));
-        assertEquals("JAWILL", LoginResult2.username());
+        var loginresult2 = assertDoesNotThrow(() -> userservice.createUser(user));
+        assertEquals("JAWILL", loginresult2.username());
     }
 
     @Test
-    void Login() throws DataAccessException {
-        UserData LoginResult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData AuthResult = assertDoesNotThrow(() -> authservice.createAuth(LoginResult));
+    void login() throws DataAccessException {
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
-        String authToken = AuthResult.authToken();
+        String authToken = authresult.authToken();
         authservice.logoutAuth(authToken);
 
-        AuthData createdAuth = authservice.createAuth(LoginResult);
+        AuthData createdAuth = authservice.createAuth(loginresult);
         assertEquals("JAWILL", createdAuth.username());
 
         authservice.logoutAuth(authToken);
@@ -61,38 +53,38 @@ class UnitTests {
 }
 
     @Test
-    void Logout() throws DataAccessException {
-        UserData LoginResult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData AuthResult = assertDoesNotThrow(() -> authservice.createAuth(LoginResult));
+    void logout() throws DataAccessException {
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
-        String authToken = AuthResult.authToken();
+        String authToken = authresult.authToken();
         assertNotNull(authToken);
 
         authservice.logoutAuth(authToken);
         assertNull(authservice.getAuth(authToken));
 
-        AuthData AuthResult2 = assertDoesNotThrow(() -> authservice.createAuth(LoginResult));
-        String authToken2 = AuthResult2.authToken();
-        assertNotNull(authToken2);
+        AuthData authresult2 = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
+        String authtoken2 = authresult2.authToken();
+        assertNotNull(authtoken2);
 
         authservice.logoutAuth(null);
-        assertNotNull(authservice.getAuth(authToken2));
+        assertNotNull(authservice.getAuth(authtoken2));
     }
 
     @Test
     void createGame() throws DataAccessException {
-        UserData LoginResult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData AuthResult = assertDoesNotThrow(() -> authservice.createAuth(LoginResult));
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
         GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         assertEquals(newGame.gameName(), "GG");
 
-        authservice.logoutAuth(AuthResult.authToken());
+        authservice.logoutAuth(authresult.authToken());
         AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
         assertNull(newUser);
 
-        GameData newGame2 = assertDoesNotThrow(() -> gameservice.createGame(null));
-        assertEquals(newGame2.gameName(), null);
+        GameData newgame2 = assertDoesNotThrow(() -> gameservice.createGame(null));
+        assertEquals(newgame2.gameName(), null);
     }
 
     @Test
@@ -100,11 +92,11 @@ class UnitTests {
         List<GameData> GameList0 = assertDoesNotThrow(() -> gameservice.getAllGames());
         assertEquals(GameList0.size(), 0);
 
-        GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        List<GameData> GameList1 = assertDoesNotThrow(() -> gameservice.getAllGames());
+        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
+        List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
 
-        assertEquals(GameList1.size(), 1);
-        assertEquals(GameList1.get(0).gameName(), newGame.gameName());
+        assertEquals(gamelist1.size(), 1);
+        assertEquals(gamelist1.get(0).gameName(), newgame.gameName());
 
         AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
         assertNull(newUser);
@@ -112,8 +104,8 @@ class UnitTests {
 
     @Test
     void joinGame() throws DataAccessException {
-        GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        assertEquals(newGame.gameName(), "GG");
+        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
+        assertEquals(newgame.gameName(), "GG");
 
         Boolean status = gameservice.joinGame("JAWILL", "WHITE", 1);
         assertTrue(status);
@@ -125,8 +117,8 @@ class UnitTests {
     @Test
     void clearGame() throws DataAccessException {
         GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        UserData LoginResult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData AuthResult = assertDoesNotThrow(() -> authservice.createAuth(LoginResult));
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
         authservice.clearAuths();
         gameservice.clearGames();
@@ -136,7 +128,7 @@ class UnitTests {
         assertEquals(GameList0.size(), 0);
 
         assertNull(userservice.getUser("JAWILL"));
-        assertNull(authservice.getAuth(AuthResult.authToken()));
+        assertNull(authservice.getAuth(authresult.authToken()));
 
     }
 }

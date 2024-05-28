@@ -7,23 +7,23 @@ import java.util.List;
 
 
 public class GameService {
-    private final GameDAO GameAccess;
+    private final GameDAO gameaccess;
 
-    public GameService(GameDAO gameAccess) {
-        this.GameAccess = gameAccess;
+    public GameService(GameDAO gameaccess) {
+        this.gameaccess = gameaccess;
     }
 
     public GameData createGame(String gameName) throws DataAccessException {
-        return GameAccess.createGame(gameName);
+        return gameaccess.createGame(gameName);
     }
     public List<GameData> getAllGames() throws DataAccessException {
-        return GameAccess.getAllGames();
+        return gameaccess.getAllGames();
     }
     public Boolean joinGame(String username, String color, Integer gameID) throws DataAccessException {
-        return GameAccess.joinGame(username, color, gameID);
+        return gameaccess.joinGame(username, color, gameID);
     }
     public void clearGames() throws DataAccessException {
-        GameAccess.clearGames();
+        gameaccess.clearGames();
     }
 
 }

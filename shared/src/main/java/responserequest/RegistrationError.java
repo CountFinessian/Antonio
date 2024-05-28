@@ -1,3 +1,3 @@
-package RequestResponse;
+package responserequest;
 
 public record RegistrationError(String message) { }

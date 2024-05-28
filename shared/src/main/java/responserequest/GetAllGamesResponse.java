@@ -1,4 +1,4 @@
-package RequestResponse;
+package responserequest;
 import model.GameData;
 
 import java.util.List;
