@@ -12,8 +12,8 @@ public class MemoryGameDAO implements GameDAO {
     final static private List<GameData> gamesList = new ArrayList<>();
 
     public GameData createGame(String gameName) {
-        Integer gameID = games.size();
-        GameData game = new GameData(gameID,"", "", gameName, new ChessGame());
+        Integer gameID = games.size() + 1;
+        GameData game = new GameData(gameID,null, null, gameName, new ChessGame());
         games.put(gameID, game);
         return game;
     }
@@ -29,14 +29,14 @@ public class MemoryGameDAO implements GameDAO {
         GameData newGame;
         switch (color) {
             case "WHITE":
-                if (!game.whiteUsername().isEmpty()) {
+                if (game.whiteUsername() != null) {
                     return false;
                 }
                 newGame = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
                 games.put(gameID, newGame);
                 break;
             case "BLACK":
-                if (!game.blackUsername().isEmpty()) {
+                if (game.blackUsername() != null) {
                     return false;
                 }
                 newGame = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
