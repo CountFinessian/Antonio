@@ -15,6 +15,10 @@ import java.util.List;
 
 public class Server {
 
+    private UserService userservice = new UserService(new MemoryUserDAO());
+    private GameService gameservice = new GameService(new MemoryGameDAO());
+    private AuthService authservice = new AuthService(new MemoryAuthDAO());
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -53,7 +57,7 @@ public class Server {
             return new Gson().toJson(registerReturn);
         }
 
-        UserService userservice = new UserService(new MemoryUserDAO());
+
         if (userservice.getUser(user.username()) != null) {
             res.status(403);
             RegistrationError registerReturn = new RegistrationError("Error: already taken");
@@ -63,7 +67,6 @@ public class Server {
         UserData userdata = new UserData(user.username(), user.password(), user.email());
         UserData createdUser = userservice.createUser(userdata);
 
-        AuthService authservice = new AuthService(new MemoryAuthDAO());
         AuthData createdAuth = authservice.createAuth(createdUser);
 
         RegisterResponse registerReturn = new RegisterResponse(createdAuth.username(), createdAuth.authToken());
@@ -74,7 +77,7 @@ public class Server {
     private Object loginUser(Request req, Response res) throws DataAccessException {
         LoginRequest user = new Gson().fromJson(req.body(), LoginRequest.class);
 
-        UserService userservice = new UserService(new MemoryUserDAO());
+
         UserData checkUserData = userservice.getUser(user.username());
 
         if (checkUserData == null || !user.password().equals(checkUserData.password())) {
@@ -84,7 +87,6 @@ public class Server {
             return new Gson().toJson(registerReturn);
         }
 
-        AuthService authservice = new AuthService(new MemoryAuthDAO());
         AuthData createdAuth = authservice.createAuth(checkUserData);
 
         LoginResponse loginReturn = new LoginResponse(createdAuth.username(), createdAuth.authToken());
@@ -102,7 +104,6 @@ public class Server {
             return new Gson().toJson(registerReturn);
         }
 
-        AuthService authservice = new AuthService(new MemoryAuthDAO());
         authservice.logoutAuth(auth.authToken());
 
         res.status(200);
@@ -120,7 +121,6 @@ public class Server {
 
         MakeGameRequest makegamerequest = new Gson().fromJson(req.body(), MakeGameRequest.class);
         String gameName = makegamerequest.gameName();
-        GameService gameservice = new GameService(new MemoryGameDAO());
         GameData newGame = gameservice.createGame(gameName);
         MakeGameResponse makegameresponse = new MakeGameResponse(newGame.gameID());
         res.status(200);
@@ -134,7 +134,6 @@ public class Server {
             return new Gson().toJson(registerReturn);
         }
 
-        GameService gameservice = new GameService(new MemoryGameDAO());
         List<GameData> allGames = gameservice.getAllGames();
 
         GetAllGamesResponse getallgamesresponse = new GetAllGamesResponse(allGames);
@@ -145,8 +144,6 @@ public class Server {
     private Object joinGame(Request req, Response res) throws DataAccessException {
 
         JoinGameRequest joingamerequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
-        GameService gameservice = new GameService(new MemoryGameDAO());
-        List<GameData> allGames = gameservice.getAllGames();
 
         if (joingamerequest.gameID() == null || joingamerequest.playerColor() == null) {
 
@@ -175,10 +172,6 @@ public class Server {
     }
 
         private Object deleteDatabase( Request req, Response res) throws DataAccessException {
-            AuthService authservice = new AuthService(new MemoryAuthDAO());
-            GameService gameservice = new GameService(new MemoryGameDAO());
-            UserService userservice = new UserService(new MemoryUserDAO());
-
             authservice.clearAuths();
             gameservice.clearGames();
             userservice.clearUsers();
@@ -190,7 +183,6 @@ public class Server {
 
     private AuthData authenticator(Request req) throws DataAccessException {
         String authToken = req.headers("Authorization");
-        AuthService authservice = new AuthService(new MemoryAuthDAO());
         AuthData myAuth = authservice.getAuth(authToken);
         return myAuth;
     }
