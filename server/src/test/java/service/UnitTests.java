@@ -23,7 +23,15 @@ class UnitTests {
     }
 
     @Test
-    void register() {
+    void registerpos() {
+        var loginidentity = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
+        assertNull(loginidentity);
+
+        var loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        assertEquals("JAWILL", loginresult.username());
+    }
+    @Test
+    void registerneg() {
         var loginidentity = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
         assertNull(loginidentity);
 
@@ -36,9 +44,8 @@ class UnitTests {
         var loginresult2 = assertDoesNotThrow(() -> userservice.createUser(user));
         assertEquals("JAWILL", loginresult2.username());
     }
-
     @Test
-    void login() throws DataAccessException {
+    void loginpos() throws DataAccessException {
         UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
         AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
@@ -50,8 +57,18 @@ class UnitTests {
 
         authservice.logoutAuth(authToken);
        assertNull(userservice.getUser("KAWILL"));
-}
+    }
+    @Test
+    void loginneg() throws DataAccessException {
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
+        String authToken = authresult.authToken();
+        authservice.logoutAuth(authToken);
+
+        authservice.logoutAuth(authToken);
+        assertNull(userservice.getUser("KAWILL"));
+    }
     @Test
     void logout() throws DataAccessException {
         UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
@@ -62,22 +79,30 @@ class UnitTests {
 
         authservice.logoutAuth(authToken);
         assertNull(authservice.getAuth(authToken));
-
+    }
+    @Test
+    void logoutneg() throws DataAccessException {
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
         AuthData authresult2 = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
+
         String authtoken2 = authresult2.authToken();
         assertNotNull(authtoken2);
 
         authservice.logoutAuth(null);
         assertNotNull(authservice.getAuth(authtoken2));
     }
-
     @Test
-    void createGame() throws DataAccessException {
+    void creategamepos() throws DataAccessException {
         UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
         AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
         GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         assertEquals(newGame.gameName(), "GG");
+    }
+    @Test
+    void creategameneg() throws DataAccessException {
+        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
+        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
 
         authservice.logoutAuth(authresult.authToken());
         AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
@@ -88,7 +113,7 @@ class UnitTests {
     }
 
     @Test
-    void listGames() throws DataAccessException {
+    void listgamespos() throws DataAccessException {
         List<GameData> GameList0 = assertDoesNotThrow(() -> gameservice.getAllGames());
         assertEquals(GameList0.size(), 0);
 
@@ -97,13 +122,28 @@ class UnitTests {
 
         assertEquals(gamelist1.size(), 1);
         assertEquals(gamelist1.get(0).gameName(), newgame.gameName());
+    }
+    @Test
+    void listgamesneg() throws DataAccessException {
+        List<GameData> GameList0 = assertDoesNotThrow(() -> gameservice.getAllGames());
+        assertEquals(GameList0.size(), 0);
+
+        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
+        List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
 
         AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
         assertNull(newUser);
     }
-
     @Test
-    void joinGame() throws DataAccessException {
+    void joingamepos() throws DataAccessException {
+        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
+        assertEquals(newgame.gameName(), "GG");
+
+        Boolean status = gameservice.joinGame("JAWILL", "WHITE", 1);
+        assertTrue(status);
+    }
+    @Test
+    void joingameneg() throws DataAccessException {
         GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         assertEquals(newgame.gameName(), "GG");
 
@@ -113,7 +153,6 @@ class UnitTests {
         Boolean status2 = gameservice.joinGame("KAWILL", "WHITE", 1);
         assertFalse(status2);
     }
-
     @Test
     void clearGame() throws DataAccessException {
         GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
@@ -124,8 +163,8 @@ class UnitTests {
         gameservice.clearGames();
         userservice.clearUsers();
 
-        List<GameData> GameList0 = assertDoesNotThrow(() -> gameservice.getAllGames());
-        assertEquals(GameList0.size(), 0);
+        List<GameData> gamelist0 = assertDoesNotThrow(() -> gameservice.getAllGames());
+        assertEquals(gamelist0.size(), 0);
 
         assertNull(userservice.getUser("JAWILL"));
         assertNull(authservice.getAuth(authresult.authToken()));
