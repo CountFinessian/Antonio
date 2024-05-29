@@ -114,8 +114,8 @@ class UnitTests {
 
     @Test
     void listgamespos() throws DataAccessException {
-        List<GameData> GameList0 = assertDoesNotThrow(() -> gameservice.getAllGames());
-        assertEquals(GameList0.size(), 0);
+        List<GameData> gamelist0 = assertDoesNotThrow(() -> gameservice.getAllGames());
+        assertEquals(gamelist0.size(), 0);
 
         GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
@@ -125,8 +125,8 @@ class UnitTests {
     }
     @Test
     void listgamesneg() throws DataAccessException {
-        List<GameData> GameList0 = assertDoesNotThrow(() -> gameservice.getAllGames());
-        assertEquals(GameList0.size(), 0);
+        List<GameData> gamelist0 = assertDoesNotThrow(() -> gameservice.getAllGames());
+        assertEquals(gamelist0.size(), 0);
 
         GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
