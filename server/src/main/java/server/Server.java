@@ -15,7 +15,7 @@ import java.util.List;
 public class Server {
 
     private UserService userservice = new UserService(new MemoryUserDAO());
-    private GameService gameservice = new GameService(new MemoryGameDAO());
+    private GameService gameservice = new GameService(new SQLGameDAO());
     private AuthService authservice = new AuthService(new MemoryAuthDAO());
 
     public int run(int desiredPort) {

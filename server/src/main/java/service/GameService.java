@@ -21,6 +21,7 @@ public class GameService {
     }
     public Boolean joinGame(String username, String color, Integer gameID) throws DataAccessException {
         return gameaccess.joinGame(username, color, gameID);
+
     }
     public void clearGames() throws DataAccessException {
         gameaccess.clearGames();
