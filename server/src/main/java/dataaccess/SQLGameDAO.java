@@ -7,9 +7,19 @@ import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
 
+    public SQLGameDAO() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
         return null;
+        //make new chess board
+        //GSON.JSON.toString(board)
+
+
+//        preparedstatement("gamename" "board")
+//        preparedstatement.executeUpdate
     }
 
     @Override
@@ -28,30 +38,18 @@ public class SQLGameDAO implements GameDAO {
     }
 
     private final String[] createStatements = {
-        """
-        CREATE TABLE IF NOT EXISTS GameData (
-            `gameID` INT NOT NULL AUTO_INCREMENT,
-            `whiteUsername` VARCHAR(256) NOT NULL,
-            `blackUsername` VARCHAR(256) NOT NULL,
-            `gameName` VARCHAR(256) NOT NULL,
-            `game` TEXT NOT NULL,
-            PRIMARY KEY (`gameID`),
-            INDEX(`whiteUsername`),
-            INDEX(`blackUsername`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-        """
+            """
+    CREATE TABLE IF NOT EXISTS GameData (
+        gameID INT NOT NULL AUTO_INCREMENT,
+        whiteUsername VARCHAR(256) DEFAULT NULL,
+        blackUsername VARCHAR(256) DEFAULT NULL,
+        gameName VARCHAR(256) NOT NULL,
+        game TEXT NOT NULL,
+        PRIMARY KEY (gameID)
+    )"""
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Unable to configure database: " + ex.getMessage(), ex);
-        }
+        SQLUserDAO.databaseConfigure(createStatements);
     }
 }

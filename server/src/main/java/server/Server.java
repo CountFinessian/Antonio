@@ -14,14 +14,22 @@ import java.util.List;
 
 public class Server {
 
-    private UserService userservice = new UserService(new MemoryUserDAO());
-    private GameService gameservice = new GameService(new SQLGameDAO());
-    private AuthService authservice = new AuthService(new MemoryAuthDAO());
+    private UserService userservice;
+    private GameService gameservice;
+    private AuthService authservice;
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        try {
+            gameservice = new GameService(new SQLGameDAO());
+            authservice = new AuthService(new SQLAuthDAO());
+            userservice = new UserService(new SQLUserDAO());;
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         Spark.post("/user", this::createUser);
         // Register your endpoints and handle exceptions here.
