@@ -3,6 +3,8 @@ package dataaccess;
 import model.AuthData;
 import model.UserData;
 
+import java.util.UUID;
+
 public class SQLAuthDAO implements AuthDAO{
 
     public SQLAuthDAO() throws DataAccessException {
@@ -11,7 +13,12 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public AuthData createAuth(UserData user) throws DataAccessException {
-        return null;
+        String authToken = UUID.randomUUID().toString();
+        var statement = "INSERT INTO AuthData (authToken, username) VALUES (?, ?)";
+        SQLUserDAO.executeUpdate(statement, authToken, user.username());
+        AuthData auth = new AuthData(authToken, user.username());
+        return auth;
+
     }
 
     @Override

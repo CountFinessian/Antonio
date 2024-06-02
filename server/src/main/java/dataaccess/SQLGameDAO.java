@@ -14,8 +14,9 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
         return null;
-        //make new chess board
-        //GSON.JSON.toString(board)
+
+//        make new chess board
+//        GSON.JSON.toString(board)
 
 
 //        preparedstatement("gamename" "board")
