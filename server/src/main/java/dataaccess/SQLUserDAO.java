@@ -43,7 +43,8 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clearUsers() throws DataAccessException {
-
+        var statement = "TRUNCATE UserData";
+        executeUpdate(statement);
     }
     private final String[] createStatements = {
             """

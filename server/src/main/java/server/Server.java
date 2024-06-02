@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import responserequest.*;
 import service.*;
-
 
 import spark.*;
 
@@ -70,8 +70,10 @@ public class Server {
             RegistrationError registerReturn = new RegistrationError("Error: already taken");
             return new Gson().toJson(registerReturn);
         }
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
 
-        UserData userdata = new UserData(user.username(), user.password(), user.email());
+        UserData userdata = new UserData(user.username(), hashedPassword, user.email());
+
         UserData createdUser = userservice.createUser(userdata);
 
         AuthData createdAuth = authservice.createAuth(createdUser);
@@ -84,10 +86,9 @@ public class Server {
     private Object loginUser(Request req, Response res) throws DataAccessException {
         LoginRequest user = new Gson().fromJson(req.body(), LoginRequest.class);
 
-
         UserData checkUserData = userservice.getUser(user.username());
 
-        if (checkUserData == null || !user.password().equals(checkUserData.password())) {
+        if (checkUserData == null || !BCrypt.checkpw(user.password(), checkUserData.password())) {
             res.status(401);
 
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
