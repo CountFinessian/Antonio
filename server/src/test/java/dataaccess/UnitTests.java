@@ -1,5 +1,8 @@
 package dataaccess;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -186,7 +189,7 @@ class UnitTests {
     }
 
     @Test
-    void editgamePos() throws DataAccessException {
+    void editgameNeg() throws DataAccessException {
         GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         assertEquals(newgame.gameName(), "GG");
 
@@ -199,10 +202,10 @@ class UnitTests {
                         String game = rs.getString("game");
                         ChessGame chessGame = new Gson().fromJson(game, ChessGame.class);
                         chessGame.boardRefill();
-                        mynew ChessMove();
-                        chessGame.makeMove();
-
-
+                        ChessMove myChessMove = new ChessMove(new ChessPosition(2,2), new ChessPosition(2,4), null);
+                        InvalidMoveException exception = assertThrows(InvalidMoveException.class, () -> {
+                            chessGame.makeMove(myChessMove);
+                        });
                     }
                 }
             }
