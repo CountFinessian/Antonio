@@ -2,7 +2,6 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.ResultSet;
@@ -24,9 +23,9 @@ public class SQLGameDAO implements GameDAO {
         }
         var statement = "INSERT INTO GameData (gameName, game) VALUES (?, ?)";
         ChessGame chessBoard = new ChessGame();
-        String JsonGame = new Gson().toJson(chessBoard);
-        Integer ChessID = SQLUserDAO.executeUpdate(statement, gameName, JsonGame);
-        GameData game = new GameData(ChessID, null, null, gameName, chessBoard);
+        String jsongame = new Gson().toJson(chessBoard);
+        Integer chessid = SQLUserDAO.executeUpdate(statement, gameName, jsongame);
+        GameData game = new GameData(chessid, null, null, gameName, chessBoard);
         return game;
     }
 

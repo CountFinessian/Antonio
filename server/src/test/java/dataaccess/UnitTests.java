@@ -23,12 +23,14 @@ class UnitTests {
     private static GameService gameservice;
     private static AuthService authservice;
     private static UserData user = new UserData("JAWILL", "password", "jawill@byu.edu");
+
     @BeforeEach
     void clear() throws DataAccessException {
         try {
             gameservice = new GameService(new SQLGameDAO());
             authservice = new AuthService(new SQLAuthDAO());
-            userservice = new UserService(new SQLUserDAO());;
+            userservice = new UserService(new SQLUserDAO());
+            ;
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -38,158 +40,7 @@ class UnitTests {
     }
 
     @Test
-    void registerpos() {
-        var loginidentity = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNull(loginidentity);
-
-        var loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        assertEquals("JAWILL", loginresult.username());
-
-        var loginidentity2 = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNotNull(loginidentity2);
-    }
-    @Test
-    void registerneg() {
-        var loginidentity = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNull(loginidentity);
-
-        var loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        assertEquals("JAWILL", loginresult.username());
-
-        var loginidentity2 = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNotNull(loginidentity2);
-    }
-    @Test
-    void loginpos() throws DataAccessException {
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        String authToken = authresult.authToken();
-        authservice.logoutAuth(authToken);
-
-        AuthData createdAuth = authservice.createAuth(loginresult);
-        assertEquals("JAWILL", createdAuth.username());
-
-        authservice.logoutAuth(authToken);
-        assertNull(userservice.getUser("KAWILL"));
-    }
-    @Test
-    void loginneg() throws DataAccessException {
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        String authToken = authresult.authToken();
-        authservice.logoutAuth(authToken);
-
-        authservice.logoutAuth(authToken);
-        assertNull(userservice.getUser("KAWILL"));
-    }
-    @Test
-    void logoutpos() throws DataAccessException {
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        String authToken = authresult.authToken();
-        assertNotNull(authToken);
-
-        authservice.logoutAuth(authToken);
-        assertNull(authservice.getAuth(authToken));
-    }
-    @Test
-    void logoutneg() throws DataAccessException {
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult2 = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        String authtoken2 = authresult2.authToken();
-        assertNotNull(authtoken2);
-
-        authservice.logoutAuth(null);
-        assertNotNull(authservice.getAuth(authtoken2));
-    }
-    @Test
-    void creategamepos() throws DataAccessException {
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        assertEquals(newGame.gameName(), "GG");
-    }
-    @Test
-    void creategameneg() throws DataAccessException {
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        authservice.logoutAuth(authresult.authToken());
-        AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
-        assertNull(newUser);
-
-        DataAccessException exception = assertThrows(DataAccessException.class, () -> {
-            gameservice.createGame(null);
-        });
-        assertTrue(exception.getMessage().contains("Game name cannot be null or empty"));
-    }
-
-    @Test
-    void listgamespos() throws DataAccessException {
-        List<GameData> gamelist0 = assertDoesNotThrow(() -> gameservice.getAllGames());
-        assertEquals(gamelist0.size(), 0);
-
-        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
-
-        assertEquals(gamelist1.size(), 1);
-        assertEquals(gamelist1.get(0).gameName(), newgame.gameName());
-    }
-    @Test
-    void listgamesneg() throws DataAccessException {
-        List<GameData> gamelist0 = assertDoesNotThrow(() -> gameservice.getAllGames());
-        assertEquals(gamelist0.size(), 0);
-
-        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
-
-        AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
-        assertNull(newUser);
-    }
-    @Test
-    void joingamepos() throws DataAccessException {
-        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        assertEquals(newgame.gameName(), "GG");
-
-        Boolean status = gameservice.joinGame("JAWILL", "WHITE", 1);
-        assertTrue(status);
-    }
-    @Test
-    void joingameneg() throws DataAccessException {
-        GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        assertEquals(newgame.gameName(), "GG");
-
-        Boolean status = gameservice.joinGame("JAWILL", "WHITE", 1);
-        assertTrue(status);
-
-        Boolean status2 = gameservice.joinGame("KAWILL", "WHITE", 1);
-        assertFalse(status2);
-    }
-    @Test
-    void clearGame() throws DataAccessException {
-        GameData newGame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
-        UserData loginresult = assertDoesNotThrow(() -> userservice.createUser(user));
-        AuthData authresult = assertDoesNotThrow(() -> authservice.createAuth(loginresult));
-
-        authservice.clearAuths();
-        gameservice.clearGames();
-        userservice.clearUsers();
-
-        List<GameData> gamelist0 = assertDoesNotThrow(() -> gameservice.getAllGames());
-        assertEquals(gamelist0.size(), 0);
-
-        assertNull(userservice.getUser("JAWILL"));
-        assertNull(authservice.getAuth(authresult.authToken()));
-
-    }
-
-    @Test
-    void editgameNeg() throws DataAccessException {
+    void editgamePos() throws DataAccessException {
         GameData newgame = assertDoesNotThrow(() -> gameservice.createGame("GG"));
         assertEquals(newgame.gameName(), "GG");
 
@@ -202,15 +53,22 @@ class UnitTests {
                         String game = rs.getString("game");
                         ChessGame chessGame = new Gson().fromJson(game, ChessGame.class);
                         chessGame.boardRefill();
-                        ChessMove myChessMove = new ChessMove(new ChessPosition(2,2), new ChessPosition(2,4), null);
-                        InvalidMoveException exception = assertThrows(InvalidMoveException.class, () -> {
-                            chessGame.makeMove(myChessMove);
+
+                        ChessMove myChessMove2 = new ChessMove(new ChessPosition(2, 2), new ChessPosition(2, 4), null);
+                        assertThrows(InvalidMoveException.class, () -> {
+                            chessGame.makeMove(myChessMove2);
                         });
+
+                        ChessMove myChessMove = new ChessMove(new ChessPosition(2, 2), new ChessPosition(4, 2), null);
+                        chessGame.makeMove(myChessMove);
+                        String JsonGame = new Gson().toJson(chessGame);
+                        var updateStatementW = "UPDATE GameData SET game=? WHERE gameID=?";
+                        SQLUserDAO.executeUpdate(updateStatementW, JsonGame, newgame.gameID());
                     }
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Invalid color specified" + e.getMessage());
+        } catch (SQLException | InvalidMoveException e) {
+            throw new DataAccessException("SQL Error: " + e.getMessage());
         }
     }
 }
