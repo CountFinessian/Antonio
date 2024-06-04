@@ -19,6 +19,9 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
+        if (gameName == null || gameName.isEmpty()) {
+            throw new DataAccessException("Game name cannot be null or empty");
+        }
         var statement = "INSERT INTO GameData (gameName, game) VALUES (?, ?)";
         ChessGame chessBoard = new ChessGame();
         String JsonGame = new Gson().toJson(chessBoard);

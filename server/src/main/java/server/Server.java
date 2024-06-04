@@ -129,6 +129,8 @@ public class Server {
 
         MakeGameRequest makegamerequest = new Gson().fromJson(req.body(), MakeGameRequest.class);
         String gameName = makegamerequest.gameName();
+
+
         GameData newGame = gameservice.createGame(gameName);
         MakeGameResponse makegameresponse = new MakeGameResponse(newGame.gameID());
         res.status(200);
