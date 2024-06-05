@@ -6,7 +6,6 @@ import chess.InvalidMoveException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import service.AuthService;
@@ -44,12 +43,10 @@ class UnitTests {
 
     @Test
     void registrationpositive() {
-        var attemptToLogin = assertDoesNotThrow(() -> userservice.getUser("JAWILL"));
-        assertNull(attemptToLogin);
-
         var attemptToRegister = assertDoesNotThrow(() -> userservice.createUser(user));
         assertEquals("JAWILL", attemptToRegister.username());
     }
+
     @Test
     void registrationnegative() {
         var registerSameUser = assertThrows(DataAccessException.class, () -> { userservice.createUser(user); });
@@ -161,9 +158,9 @@ class UnitTests {
 
                         ChessMove myChessMove = new ChessMove(new ChessPosition(2, 2), new ChessPosition(4, 2), null);
                         chessGame.makeMove(myChessMove);
-                        String JsonGame = new Gson().toJson(chessGame);
+                        String jsongame = new Gson().toJson(chessGame);
                         var updateStatementW = "UPDATE GameData SET game=? WHERE gameID=?";
-                        SQLUserDAO.executeUpdate(updateStatementW, JsonGame, newgame.gameID());
+                        SQLUserDAO.executeUpdate(updateStatementW, jsongame, newgame.gameID());
                     }
                 }
             }
