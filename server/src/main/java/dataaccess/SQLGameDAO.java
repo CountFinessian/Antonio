@@ -13,7 +13,7 @@ public class SQLGameDAO implements GameDAO {
     final static private List<GameData> GAMESLIST = new ArrayList<>();
 
     public SQLGameDAO() throws DataAccessException {
-        configureDatabase();
+        SQLUserDAO.databaseConfigure(createStatements);
     }
 
     @Override
@@ -113,7 +113,4 @@ public class SQLGameDAO implements GameDAO {
         )"""
     };
 
-    private void configureDatabase() throws DataAccessException {
-        SQLUserDAO.databaseConfigure(createStatements);
-    }
 }

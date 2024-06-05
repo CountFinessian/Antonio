@@ -9,7 +9,7 @@ import java.util.UUID;
 public class SQLAuthDAO implements AuthDAO{
 
     public SQLAuthDAO() throws DataAccessException {
-        configureDatabase();
+        SQLUserDAO.databaseConfigure(createStatements);
     }
 
     @Override
@@ -65,7 +65,4 @@ public class SQLAuthDAO implements AuthDAO{
     )"""
     };
 
-    private void configureDatabase() throws DataAccessException {
-        SQLUserDAO.databaseConfigure(createStatements);
-    }
 }
