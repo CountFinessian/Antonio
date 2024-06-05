@@ -50,7 +50,7 @@ class UnitTests {
     @Test
     void registrationnegative() {
         var registerSameUser = assertThrows(DataAccessException.class, () -> { userservice.createUser(user); });
-        assertEquals("Unable to configure database: Duplicate entry 'JAWILL' for key 'userdata.PRIMARY'", registerSameUser.getMessage());
+        assertEquals("Unable to configure database: Duplicate entry 'JAWILL' for key 'UserData.PRIMARY'", registerSameUser.getMessage());
     }
 
     @Test
