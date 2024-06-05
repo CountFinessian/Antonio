@@ -127,9 +127,9 @@ class UnitTests {
         var registerDifferentUser = assertDoesNotThrow( () -> userservice.createUser(user2));
         var validAuthCreation = assertDoesNotThrow(() -> authservice.createAuth(user2));
 
-        authservice.clearAuths();
-        gameservice.clearGames();
-        userservice.clearUsers();
+        assertDoesNotThrow(() -> authservice.clearAuths());
+        assertDoesNotThrow(() -> gameservice.clearGames());
+        assertDoesNotThrow(() ->userservice.clearUsers());
 
         assertEquals(gameservice.getAllGames().size(), 0);
         assertNull(userservice.getUser(registerDifferentUser.username()));
