@@ -108,6 +108,9 @@ class UnitTests {
     void listgamesnegative() throws DataAccessException {
         AuthData newUser = assertDoesNotThrow(() -> authservice.getAuth(null));
         assertNull(newUser);
+        assertDoesNotThrow(() -> gameservice.clearGames());
+        List<GameData> gamelist1 = assertDoesNotThrow(() -> gameservice.getAllGames());
+        assertEquals(0, gamelist1.size());
     }
 
     @Test
@@ -126,6 +129,7 @@ class UnitTests {
     void clearGame() throws DataAccessException {
         var registerDifferentUser = assertDoesNotThrow( () -> userservice.createUser(user2));
         var validAuthCreation = assertDoesNotThrow(() -> authservice.createAuth(user2));
+        assertDoesNotThrow(() -> gameservice.createGame("GG"));
 
         assertDoesNotThrow(() -> authservice.clearAuths());
         assertDoesNotThrow(() -> gameservice.clearGames());
