@@ -12,6 +12,7 @@ import service.AuthService;
 import service.GameService;
 import service.UserService;
 import com.google.gson.Gson;
+import exception.DataAccessException;
 
 import java.sql.SQLException;
 import java.util.List;

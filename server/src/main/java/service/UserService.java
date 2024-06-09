@@ -1,7 +1,7 @@
 package service;
-import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.*;
+import exception.DataAccessException;
 
 public class UserService {
     private final UserDAO useraccess;

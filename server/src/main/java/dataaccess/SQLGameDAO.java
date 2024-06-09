@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import exception.DataAccessException;
 
 public class SQLGameDAO implements GameDAO {
     final static private List<GameData> GAMESLIST = new ArrayList<>();

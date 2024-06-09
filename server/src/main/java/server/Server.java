@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 
 import com.google.gson.JsonObject;
 import dataaccess.*;
+import exception.DataAccessException;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 import responserequest.*;
@@ -11,6 +12,7 @@ import service.*;
 import spark.*;
 
 import java.util.List;
+import exception.DataAccessException;
 
 public class Server {
 
@@ -27,7 +29,7 @@ public class Server {
             gameservice = new GameService(new SQLGameDAO());
             authservice = new AuthService(new SQLAuthDAO());
             userservice = new UserService(new SQLUserDAO());;
-        } catch (DataAccessException e) {
+        } catch (exception.DataAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -54,7 +56,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object createUser(Request req, Response res) throws DataAccessException {
+    private Object createUser(Request req, Response res) throws exception.DataAccessException {
 //      if statements to check for bad data such as an invalid request.
         RegisterRequest user = new Gson().fromJson(req.body(), RegisterRequest.class);
 
@@ -83,7 +85,7 @@ public class Server {
         return new Gson().toJson(registerReturn);
     }
 
-    private Object loginUser(Request req, Response res) throws DataAccessException {
+    private Object loginUser(Request req, Response res) throws exception.DataAccessException {
         LoginRequest user = new Gson().fromJson(req.body(), LoginRequest.class);
 
         UserData checkUserData = userservice.getUser(user.username());
@@ -103,7 +105,7 @@ public class Server {
 
     }
 
-    private Object deleteUser(Request req, Response res) throws DataAccessException {
+    private Object deleteUser(Request req, Response res) throws exception.DataAccessException {
 
         AuthData auth = authenticator(req);
         if (auth == null) {
@@ -119,7 +121,7 @@ public class Server {
         return new Gson().toJson(emptyJsonObject);
     }
 
-    private Object createGame(Request req, Response res) throws DataAccessException {
+    private Object createGame(Request req, Response res) throws exception.DataAccessException {
 
         if (authenticator(req) == null) {
             res.status(401);
@@ -137,7 +139,7 @@ public class Server {
         return new Gson().toJson(makegameresponse);
     }
 
-    private Object listGames(Request req, Response res) throws DataAccessException {
+    private Object listGames(Request req, Response res) throws exception.DataAccessException {
         if (authenticator(req) == null) {
             res.status(401);
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
@@ -151,7 +153,7 @@ public class Server {
         return new Gson().toJson(getallgamesresponse);
     }
 
-    private Object joinGame(Request req, Response res) throws DataAccessException {
+    private Object joinGame(Request req, Response res) throws exception.DataAccessException {
         JoinGameRequest joingamerequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
 
         if (joingamerequest.gameID() == null || joingamerequest.playerColor() == null) {
@@ -180,7 +182,7 @@ public class Server {
         }
     }
 
-        private Object deleteDatabase( Request req, Response res) throws DataAccessException {
+        private Object deleteDatabase( Request req, Response res) throws exception.DataAccessException {
             authservice.clearAuths();
             gameservice.clearGames();
             userservice.clearUsers();

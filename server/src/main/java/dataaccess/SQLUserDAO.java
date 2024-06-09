@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
+import exception.DataAccessException;
 
 public class SQLUserDAO implements UserDAO {
 
