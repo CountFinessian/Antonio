@@ -9,10 +9,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import responserequest.*;
 import service.*;
 
-import spark.*;
 
+import spark.*;
 import java.util.List;
-import exception.DataAccessException;
 
 public class Server {
 
@@ -28,7 +27,8 @@ public class Server {
         try {
             gameservice = new GameService(new SQLGameDAO());
             authservice = new AuthService(new SQLAuthDAO());
-            userservice = new UserService(new SQLUserDAO());;
+            userservice = new UserService(new SQLUserDAO());
+            ;
         } catch (exception.DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -107,7 +107,7 @@ public class Server {
 
     private Object deleteUser(Request req, Response res) throws exception.DataAccessException {
 
-        AuthData auth = authenticator(req);
+        AuthData auth = authenticator(req, "null");
         if (auth == null) {
             res.status(401);
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
@@ -123,7 +123,7 @@ public class Server {
 
     private Object createGame(Request req, Response res) throws exception.DataAccessException {
 
-        if (authenticator(req) == null) {
+        if (authenticator(req, "null") == null) {
             res.status(401);
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
             return new Gson().toJson(registerReturn);
@@ -140,7 +140,7 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) throws exception.DataAccessException {
-        if (authenticator(req) == null) {
+        if (authenticator(req, "null") == null) {
             res.status(401);
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
             return new Gson().toJson(registerReturn);
@@ -163,7 +163,7 @@ public class Server {
             return new Gson().toJson(registerReturn);
         }
 
-        AuthData auth = authenticator(req);
+        AuthData auth = authenticator(req, "null");
         if (auth == null) {
             res.status(401);
             RegistrationError registerReturn = new RegistrationError("Error: unauthorized");
@@ -182,18 +182,23 @@ public class Server {
         }
     }
 
-        private Object deleteDatabase( Request req, Response res) throws exception.DataAccessException {
-            authservice.clearAuths();
-            gameservice.clearGames();
-            userservice.clearUsers();
-            res.status(200);
-            JsonObject emptyJsonObject = new JsonObject();
-            return new Gson().toJson(emptyJsonObject);
-        }
+    private Object deleteDatabase(Request req, Response res) throws exception.DataAccessException {
+        authservice.clearAuths();
+        gameservice.clearGames();
+        userservice.clearUsers();
+        res.status(200);
+        JsonObject emptyJsonObject = new JsonObject();
+        return new Gson().toJson(emptyJsonObject);
+    }
 
-    private AuthData authenticator(Request req) throws DataAccessException {
-        String authToken = req.headers("Authorization");
-        AuthData myAuth = authservice.getAuth(authToken);
-        return myAuth;
+    private AuthData authenticator(Request req, String workaround) throws DataAccessException {
+        if (workaround == "null") {
+            String authToken = req.headers("Authorization");
+            AuthData myAuth = authservice.getAuth(authToken);
+            return myAuth;
+        } else {
+            AuthData myAuth = authservice.getAuth(workaround);
+            return myAuth;
+        }
     }
 }
