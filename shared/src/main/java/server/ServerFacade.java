@@ -2,10 +2,16 @@ package server;
 
 import com.google.gson.Gson;
 import exception.DataAccessException;
-import model.UserData;
+import model.*;
+import responserequest.*;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 
 public class ServerFacade {
 
@@ -15,30 +21,29 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-
-    public UserData create(UserData User) throws DataAccessException {
+    public RegisterResponse createUser(RegisterRequest User) throws DataAccessException {
         var path = "/user";
-        return this.makeRequest("POST", path, User, UserData.class);
+        return this.makeRequest("POST", path, User, RegisterResponse.class);
     }
 
-    public void deletePet(int id) throws DataAccessException {
-        var path = String.format("/pet/%s", id);
-        this.makeRequest("DELETE", path, null, null);
-    }
-
-    public void deleteAllPets() throws DataAccessException {
-        var path = "/pet";
-        this.makeRequest("DELETE", path, null, null);
-    }
-
-    public Pet[] listPets() throws DataAccessException {
-        var path = "/pet";
-        record listPetResponse(Pet[] pet) {
-        }
-        var response = this.makeRequest("GET", path, null, listPetResponse.class);
-        return response.pet();
-    }
-
+//    public void loginUser(int id) throws DataAccessException {
+//        var path = String.format("/pet/%s", id);
+//        this.makeRequest("DELETE", path, null, null);
+//    }
+//
+//    public void deleteAllPets() throws DataAccessException {
+//        var path = "/pet";
+//        this.makeRequest("DELETE", path, null, null);
+//    }
+//
+//    public Pet[] listPets() throws DataAccessException {
+//        var path = "/pet";
+//        record listPetResponse(Pet[] pet) {
+//        }
+//        var response = this.makeRequest("GET", path, null, listPetResponse.class);
+//        return response.pet();
+//    }
+//
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws DataAccessException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
