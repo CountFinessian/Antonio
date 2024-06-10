@@ -5,7 +5,7 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import exception.DataAccessException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

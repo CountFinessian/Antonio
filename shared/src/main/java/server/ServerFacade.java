@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.DataAccessException;
+import model.UserData;
 
 import java.io.*;
 import java.net.*;
@@ -15,9 +16,9 @@ public class ServerFacade {
     }
 
 
-    public Pet addPet(Pet pet) throws DataAccessException {
-        var path = "/pet";
-        return this.makeRequest("POST", path, pet, Pet.class);
+    public UserData create(UserData User) throws DataAccessException {
+        var path = "/user";
+        return this.makeRequest("POST", path, User, UserData.class);
     }
 
     public void deletePet(int id) throws DataAccessException {

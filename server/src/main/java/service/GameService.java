@@ -1,7 +1,7 @@
 package service;
 import dataaccess.GameDAO;
 import model.GameData;
-
+import exception.DataAccessException;
 import java.util.List;
 
 
