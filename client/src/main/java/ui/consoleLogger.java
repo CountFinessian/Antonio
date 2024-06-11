@@ -5,10 +5,12 @@ import model.AuthData;
 import responserequest.*;
 import server.ServerFacade;
 import java.util.Scanner;
+import static ui.EscapeSequences.*;
 
 public class consoleLogger {
     private String Log = "";
     Scanner scanner = new Scanner(System.in);
+    Boolean quitButton = true;
 
     public consoleLogger(String serverUrl) {
         this.Log = serverUrl;
@@ -16,38 +18,37 @@ public class consoleLogger {
 
     public void run() throws DataAccessException {
         ServerFacade facade = new ServerFacade(Log);
-        while (true) {
-            System.out.println("Hello, please enter a command.");
+        while (quitButton) {
+            System.out.println("Hello, please type a command.");
             String input = scanner.nextLine().trim().toLowerCase();
 
             switch (input) {
                 case "clear":
-                    System.out.println("Are you sure you want to do this?");
+                    System.out.println(STR."\{SET_TEXT_COLOR_RED}Do you really?\{RESET_TEXT_COLOR}");
                     System.out.println("YES or NO?");
                     String deleteSequence = scanner.nextLine().trim().toLowerCase();
                     if (deleteSequence.equals("yes")) {
-                        System.out.println("Deleting everything...");
+                        System.out.println(STR."\{SET_TEXT_ITALIC}Deleting everything...\{RESET_TEXT_ITALIC}");
                         facade.deleteDatabase();
                     }
                     break; // Break added here
                 case "login":
                     Login();
                     // Call a method to handle sign-in logic
-                    break; // Break added here
+                    break;
                 case "register":
-                    System.out.println("Registering...");
                     Register();
-                    break; // Break added here
+                    break;
                 case "quit":
                     System.out.println("Quitting...");
                     return;
                 case "help":
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY}[LOGGED_OUT] for help:\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}register \{EscapeSequences.SET_TEXT_COLOR_BLUE}<USERNAME> <PASSWORD> <EMAIL>\{EscapeSequences.SET_TEXT_COLOR_YELLOW} - to create an account,\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}login \{EscapeSequences.SET_TEXT_COLOR_BLUE}<USERNAME> <PASSWORD>\{EscapeSequences.SET_TEXT_COLOR_YELLOW} - to play chess,\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}quit - playing chess,\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}help - with possible commands.\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}clear - delete data.\{EscapeSequences.RESET_TEXT_COLOR}");
+                    System.out.println(STR."\{SET_TEXT_COLOR_LIGHT_GREY}[LOGGED_OUT] for help:\{RESET_TEXT_COLOR}");
+                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}register \{SET_TEXT_COLOR_BLUE}<USERNAME> <PASSWORD> <EMAIL>\{SET_TEXT_COLOR_YELLOW} - to create an account,\{RESET_TEXT_COLOR}");
+                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}login \{SET_TEXT_COLOR_BLUE}<USERNAME> <PASSWORD>\{SET_TEXT_COLOR_YELLOW} - to play chess,\{RESET_TEXT_COLOR}");
+                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}quit - playing chess,\{RESET_TEXT_COLOR}");
+                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}help - with possible commands.\{RESET_TEXT_COLOR}");
+                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}clear - delete data.\{RESET_TEXT_COLOR}");
                     break;
                 default:
                     System.out.println("Unknown command. Please try again.");
@@ -59,7 +60,6 @@ public class consoleLogger {
     private void Register() throws DataAccessException {
         ServerFacade facade = new ServerFacade(Log);
         boolean main_menu = true;
-        while (main_menu) {
             System.out.println("Please enter your username.");
             String username = scanner.nextLine();
 
@@ -72,19 +72,18 @@ public class consoleLogger {
             RegisterRequest new_chessPerson = new RegisterRequest(username, password, email);
             try {
                 RegisterResponse newplayer = facade.createUser(new_chessPerson);
-                main_menu = false;
-                // Go to the Login screen using the AuthData
                 AuthData LoggedInPlayer = new AuthData(newplayer.username(), newplayer.username());
-                Postlogin(LoggedInPlayer);
-                return;
+                System.out.println(STR."\{SET_TEXT_ITALIC}Registering...\{RESET_TEXT_ITALIC}");
+                quitButton = enterChessGame.PostLogin(LoggedInPlayer, Log);
+
             } catch (Exception e) {
-                System.out.println("Username already taken.");
+                System.out.println(STR."\{SET_TEXT_COLOR_RED}Username already taken.\{RESET_TEXT_COLOR}");
                 System.out.println("Press any key to try again.");
-                System.out.println("Or type quit to go back to main menu");
+                System.out.println("Or type exit to go back to main menu");
+
                 String todo = scanner.nextLine().trim().toLowerCase();
-                if (todo.equals("quit")) {
-                    main_menu = false;
-                }
+                if (!todo.equals("exit")) {
+                    Register();
             }
         }
     }
@@ -98,60 +97,21 @@ public class consoleLogger {
         String password = scanner.nextLine();
 
         LoginRequest chessPerson = new LoginRequest(username, password);
+        System.out.println(STR."\{SET_TEXT_ITALIC}Logging in...\{RESET_TEXT_ITALIC}");
 
         try {
             LoginResponse LoggedInPlayer = facade.loginUser(chessPerson);
             AuthData authData = new AuthData(LoggedInPlayer.authToken(), LoggedInPlayer.username());
-            Postlogin(authData);
+            quitButton = enterChessGame.PostLogin(authData, Log);
+
         } catch (Exception e) {
-            System.out.println("Incorrect Username or Password.");
+            System.out.println(STR."\{SET_TEXT_COLOR_RED}Incorrect Username or Password.\{RESET_TEXT_COLOR}");
             System.out.println("Press any key to try again.");
-            System.out.println("Or type quit to go back to main menu");
+            System.out.println("Or type exit to go back to main menu");
+
             String todo = scanner.nextLine().trim().toLowerCase();
-            if (!todo.equals("quit")) {
+            if (!todo.equals("exit")) {
                 Login();
-            }
-
-        }
-    }
-
-    private void Postlogin(AuthData loogyinny) throws DataAccessException {
-        ServerFacade facade = new ServerFacade(Log);
-        boolean main_menu = true;
-        while (main_menu) {
-            System.out.println(STR."Logged in as \{loogyinny.username()}.");
-            String input = scanner.nextLine().trim().toLowerCase();
-
-            switch (input) {
-                case "create":
-                    // Implementation for create
-                    break;
-                case "join":
-                    // Implementation for join
-                    break;
-                case "observe":
-                    // Implementation for observe
-                    break;
-                case "list":
-                    // Implementation for list
-                    break;
-                case "logout":
-                    return;
-                case "quit":
-                    return;
-                case "help":
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY}[LOGGED_IN] for help:\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}create \{EscapeSequences.SET_TEXT_COLOR_BLUE}<NAME>\{EscapeSequences.SET_TEXT_COLOR_YELLOW} - a game,\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}join \{EscapeSequences.SET_TEXT_COLOR_BLUE}<ID> <WHITE|BLACK>\{EscapeSequences.SET_TEXT_COLOR_YELLOW} - a game\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}observe \{EscapeSequences.SET_TEXT_COLOR_BLUE}<ID>\{EscapeSequences.SET_TEXT_COLOR_YELLOW} - a game\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}list - games\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}logout - when you are done.\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}quit - playing chess.\{EscapeSequences.RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{EscapeSequences.SET_TEXT_COLOR_YELLOW}help - with possible commands.\{EscapeSequences.RESET_TEXT_COLOR}");
-                    break;
-                default:
-                    System.out.println("Unknown command. Please try again.");
-                    break;
             }
         }
     }
