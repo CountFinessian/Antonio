@@ -2,9 +2,7 @@ package ui;
 
 import exception.DataAccessException;
 import model.*;
-import responserequest.GetAllGamesResponse;
-import responserequest.RegisterRequest;
-import responserequest.RegisterResponse;
+import responserequest.*;
 import server.ServerFacade;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
@@ -22,15 +20,16 @@ public class enterChessGame {
 
             switch (input) {
                 case "create":
-                    Create();
-                    // Implementation for create
+                    Create(URL, loogyinny.authToken());
                     break;
                 case "join":
-                    Join();
+//                    Join(URL, loogyinny.authToken());
                     // Implementation for join
+                    //Register, then Render Game
                     break;
                 case "observe":
-                    // Implementation for observe
+//                    Observe(URL, loogyinny.authToken());
+                    // Render Game
                     break;
                 case "list":
                     GetAllGamesResponse games = facade.listGames(loogyinny.authToken());
@@ -41,8 +40,8 @@ public class enterChessGame {
                         System.out.println(STR."\{SET_TEXT_COLOR_WHITE}WHITE: \{SET_TEXT_COLOR_BLUE}\{game.whiteUsername()}");
                         System.out.println(STR."\{SET_TEXT_COLOR_BLACK}BLACK: \{SET_TEXT_COLOR_BLUE}\{game.blackUsername()}\{RESET_TEXT_COLOR}");
                         System.out.println("-----------------------------");
-                        break;
                     }
+                    break;
                 case "logout":
                     System.out.println(STR."\{SET_TEXT_ITALIC}Logging out...\{RESET_TEXT_ITALIC}");
                     facade.deleteUser(loogyinny.authToken());
@@ -60,43 +59,37 @@ public class enterChessGame {
                     System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}help - with possible commands.\{RESET_TEXT_COLOR}");
                     break;
                 default:
-                    System.out.println("Unknown command. Please try again.");
+                    System.out.println(STR."\{SET_TEXT_COLOR_RED}Unknown command. Please try again.\{RESET_TEXT_COLOR}");
                     break;
             }
         }
-
         return false;
     }
 
-    private void Create() throws DataAccessException {
-        ServerFacade facade = new ServerFacade(Log);
-        boolean main_menu = true;
-        System.out.println("Please enter your username.");
-        String username = scanner.nextLine();
+    private static void Create(String URL, String authToken) throws DataAccessException {
+        ServerFacade facade = new ServerFacade(URL);
 
-        System.out.println("Please enter your password.");
-        String password = scanner.nextLine();
+        System.out.println("Please enter the game name.");
+        String gameName = scanner.nextLine().trim().toLowerCase();
 
-        System.out.println("Please enter your email.");
-        String email = scanner.nextLine();
-
-        RegisterRequest new_chessPerson = new RegisterRequest(username, password, email);
-        try {
-            RegisterResponse newplayer = facade.createUser(new_chessPerson);
-            AuthData LoggedInPlayer = new AuthData(newplayer.username(), newplayer.username());
-            System.out.println(STR."\{SET_TEXT_ITALIC}Registering...\{RESET_TEXT_ITALIC}");
-            quitButton = enterChessGame.PostLogin(LoggedInPlayer, Log);
-
-        } catch (Exception e) {
-            System.out.println(STR."\{SET_TEXT_COLOR_RED}Username already taken.\{RESET_TEXT_COLOR}");
+        if (gameName.isEmpty()){
+            System.out.println(STR."\{SET_TEXT_COLOR_RED}Invalid game name.\{RESET_TEXT_COLOR}");
             System.out.println("Press any key to try again.");
             System.out.println("Or type exit to go back to main menu");
 
             String todo = scanner.nextLine().trim().toLowerCase();
             if (!todo.equals("exit")) {
-                Register();
+                Create(URL, authToken);
             }
         }
-    }
+        MakeGameRequest newGameRequest = new MakeGameRequest(gameName);
+
+        try {
+            MakeGameResponse newGame = facade.createGame(newGameRequest, authToken);
+            int gameID = newGame.gameID();
+            System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}Game ID: \{SET_TEXT_COLOR_BLUE}\{gameID}\{RESET_TEXT_COLOR}");
+        } catch (DataAccessException e) {
+        }
     }
 }
+

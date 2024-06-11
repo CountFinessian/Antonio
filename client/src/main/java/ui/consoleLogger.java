@@ -51,7 +51,7 @@ public class consoleLogger {
                     System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}clear - delete data.\{RESET_TEXT_COLOR}");
                     break;
                 default:
-                    System.out.println("Unknown command. Please try again.");
+                    System.out.println(STR."\{SET_TEXT_COLOR_RED}Unknown command. Please try again.\{RESET_TEXT_COLOR}");
                     break;
             }
         }
@@ -72,11 +72,11 @@ public class consoleLogger {
             RegisterRequest new_chessPerson = new RegisterRequest(username, password, email);
             try {
                 RegisterResponse newplayer = facade.createUser(new_chessPerson);
-                AuthData LoggedInPlayer = new AuthData(newplayer.username(), newplayer.username());
+                AuthData LoggedInPlayer = new AuthData(newplayer.authToken(), newplayer.username());
                 System.out.println(STR."\{SET_TEXT_ITALIC}Registering...\{RESET_TEXT_ITALIC}");
                 quitButton = enterChessGame.PostLogin(LoggedInPlayer, Log);
 
-            } catch (Exception e) {
+            } catch (DataAccessException e) {
                 System.out.println(STR."\{SET_TEXT_COLOR_RED}Username already taken.\{RESET_TEXT_COLOR}");
                 System.out.println("Press any key to try again.");
                 System.out.println("Or type exit to go back to main menu");
@@ -101,10 +101,10 @@ public class consoleLogger {
 
         try {
             LoginResponse LoggedInPlayer = facade.loginUser(chessPerson);
-            AuthData authData = new AuthData(LoggedInPlayer.authToken(), LoggedInPlayer.username());
-            quitButton = enterChessGame.PostLogin(authData, Log);
+            AuthData loggedInPlayer = new AuthData(LoggedInPlayer.authToken(), LoggedInPlayer.username());
+            quitButton = enterChessGame.PostLogin(loggedInPlayer, Log);
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             System.out.println(STR."\{SET_TEXT_COLOR_RED}Incorrect Username or Password.\{RESET_TEXT_COLOR}");
             System.out.println("Press any key to try again.");
             System.out.println("Or type exit to go back to main menu");
