@@ -1,7 +1,5 @@
-import chess.*;
 import exception.DataAccessException;
-import ui.*;
-import server.ServerFacade;
+import ui.ConsoleLogger;
 
 public class Main {
     public static void main(String[] args) throws DataAccessException {
@@ -9,7 +7,7 @@ public class Main {
         if (args.length == 1) {
             serverUrl = args[0];
         }
-        new consoleLogger(serverUrl).run();
+        new ConsoleLogger(serverUrl).run();
     }
 
 }

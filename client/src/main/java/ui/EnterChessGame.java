@@ -5,45 +5,51 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.DataAccessException;
-import model.*;
-import responserequest.*;
+import model.AuthData;
+import model.GameData;
+import responserequest.GetAllGamesResponse;
+import responserequest.JoinGameRequest;
+import responserequest.MakeGameRequest;
+import responserequest.MakeGameResponse;
 import server.ServerFacade;
+
 import java.util.Scanner;
+
 import static ui.EscapeSequences.*;
 
-public class enterChessGame {
+public class EnterChessGame {
     private static Scanner scanner;
-    private String URL;
+    private String url;
     private static ServerFacade facade;
     private static AuthData loogyinny;
 
-    public enterChessGame(String URL, AuthData loggyinny) {
-        this.URL = URL;
+    public EnterChessGame(String url, AuthData loggyinny) {
+        this.url = url;
         this.loogyinny = loggyinny;
         this.scanner = new Scanner(System.in);
-        this.facade = new ServerFacade(URL);
+        this.facade = new ServerFacade(url);
     }
 
-    public static Boolean PostLogin() throws DataAccessException {
-        boolean main_menu = true;
-        while (main_menu) {
+    public static Boolean postlogin() throws DataAccessException {
+        boolean mainmenu = true;
+        while (mainmenu) {
             System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "Logged in as " + loogyinny.username() + "." + RESET_TEXT_COLOR);
             System.out.println("Please type a command to start playing.");
             String input = scanner.nextLine().trim().toLowerCase();
 
             switch (input) {
                 case "create":
-                    Create();
+                    create();
                     break;
                 case "join":
-                    Join();
+                    join();
                     // Implementation for join
                     // Register, then Render Game
                     break;
                 case "observe":
                     System.out.println("Please enter the Game ID.");
                     int gameID = Integer.parseInt(scanner.nextLine().trim().toLowerCase());
-                    Display(gameID);
+                    display(gameID);
                     // Render Game
                     break;
                 case "list":
@@ -81,7 +87,7 @@ public class enterChessGame {
         return false;
     }
 
-    private static void Create() throws DataAccessException {
+    private static void create() throws DataAccessException {
         System.out.println("Please enter the game name.");
         String gameName = scanner.nextLine().trim().toLowerCase();
 
@@ -92,7 +98,7 @@ public class enterChessGame {
 
             String todo = scanner.nextLine().trim().toLowerCase();
             if (!todo.equals("exit")) {
-                Create();
+                create();
             }
         }
         MakeGameRequest newGameRequest = new MakeGameRequest(gameName);
@@ -106,7 +112,7 @@ public class enterChessGame {
         }
     }
 
-    private static void Join() throws DataAccessException {
+    private static void join() throws DataAccessException {
         try {
             System.out.println("Please enter the Game ID.");
             int gameID = Integer.parseInt(scanner.nextLine().trim().toLowerCase());
@@ -124,7 +130,7 @@ public class enterChessGame {
             JoinGameRequest playerToJoin = new JoinGameRequest(gameColorInitial, gameID);
             facade.joinGame(playerToJoin, loogyinny.authToken());
             System.out.println(SET_TEXT_COLOR_YELLOW + loogyinny.username() + " " + SET_TEXT_COLOR_BLUE + "joined the game!" + RESET_TEXT_COLOR);
-            Display(gameID);
+            display(gameID);
         } catch (DataAccessException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID or Game Color or GameFull" + RESET_TEXT_COLOR);
             System.out.println("Press any key to try again.");
@@ -132,19 +138,19 @@ public class enterChessGame {
 
             String todo = scanner.nextLine().trim().toLowerCase();
             if (!todo.equals("exit")) {
-                Join();
+                join();
             }
         }
     }
 
-    private static void Display(int gameID) throws DataAccessException {
+    private static void display(int gameID) throws DataAccessException {
         GameData theGame;
         GetAllGamesResponse games = facade.listGames(loogyinny.authToken());
         for (GameData game : games.games()) {
             if (game.gameID() == gameID) {
                 theGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
                 theGame.game().boardRefill();
-                displayBoard(theGame.game().getBoard());
+                displayboard(theGame.game().getBoard());
                 return;
             }
         }
@@ -154,11 +160,11 @@ public class enterChessGame {
 
         String todo = scanner.nextLine().trim().toLowerCase();
         if (!todo.equals("exit")) {
-            Display(gameID);
+            display(gameID);
         }
     }
 
-    private static void displayBoard(ChessBoard board) {
+    private static void displayboard(ChessBoard board) {
         // Print the top border (column labels)
         System.out.print("  ");
         for (char col = 'a'; col <= 'h'; col++) {

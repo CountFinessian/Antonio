@@ -2,17 +2,22 @@ package ui;
 
 import exception.DataAccessException;
 import model.AuthData;
-import responserequest.*;
+import responserequest.LoginRequest;
+import responserequest.LoginResponse;
+import responserequest.RegisterRequest;
+import responserequest.RegisterResponse;
 import server.ServerFacade;
+
 import java.util.Scanner;
+
 import static ui.EscapeSequences.*;
 
-public class consoleLogger {
+public class ConsoleLogger {
     private String Log = "";
     Scanner scanner = new Scanner(System.in);
     Boolean quitButton = true;
 
-    public consoleLogger(String serverUrl) {
+    public ConsoleLogger(String serverUrl) {
         this.Log = serverUrl;
     }
 
@@ -33,11 +38,11 @@ public class consoleLogger {
                     }
                     break; // Break added here
                 case "login":
-                    Login();
+                    login();
                     // Call a method to handle sign-in logic
                     break;
                 case "register":
-                    Register();
+                    register();
                     break;
                 case "quit":
                     System.out.println("Quitting...");
@@ -57,9 +62,8 @@ public class consoleLogger {
         }
     }
 
-    private void Register() throws DataAccessException {
+    private void register() throws DataAccessException {
         ServerFacade facade = new ServerFacade(Log);
-        boolean main_menu = true;
         System.out.println("Please enter your username.");
         String username = scanner.nextLine();
 
@@ -69,12 +73,12 @@ public class consoleLogger {
         System.out.println("Please enter your email.");
         String email = scanner.nextLine();
 
-        RegisterRequest new_chessPerson = new RegisterRequest(username, password, email);
+        RegisterRequest newchessperson = new RegisterRequest(username, password, email);
         try {
-            RegisterResponse newplayer = facade.createUser(new_chessPerson);
-            AuthData LoggedInPlayer = new AuthData(newplayer.authToken(), newplayer.username());
+            RegisterResponse newplayer = facade.createUser(newchessperson);
+            AuthData loggedinplayer = new AuthData(newplayer.authToken(), newplayer.username());
             System.out.println(SET_TEXT_ITALIC + "Registering..." + RESET_TEXT_ITALIC);
-            quitButton = new enterChessGame(Log, LoggedInPlayer).PostLogin();
+            quitButton = new EnterChessGame(Log, loggedinplayer).postlogin();
 
         } catch (DataAccessException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Username already taken." + RESET_TEXT_COLOR);
@@ -83,12 +87,12 @@ public class consoleLogger {
 
             String todo = scanner.nextLine().trim().toLowerCase();
             if (!todo.equals("exit")) {
-                Register();
+                register();
             }
         }
     }
 
-    private void Login() throws DataAccessException {
+    private void login() throws DataAccessException {
         ServerFacade facade = new ServerFacade(Log);
         System.out.println("Please enter your username.");
         String username = scanner.nextLine();
@@ -100,9 +104,9 @@ public class consoleLogger {
         System.out.println(SET_TEXT_ITALIC + "Logging in..." + RESET_TEXT_ITALIC);
 
         try {
-            LoginResponse LoggedInPlayer = facade.loginUser(chessPerson);
-            AuthData loggedInPlayer = new AuthData(LoggedInPlayer.authToken(), LoggedInPlayer.username());
-            quitButton = new enterChessGame(Log, loggedInPlayer).PostLogin();
+            LoginResponse loggedinplayer = facade.loginUser(chessPerson);
+            AuthData loggedInPlayer = new AuthData(loggedinplayer.authToken(), loggedinplayer.username());
+            quitButton = new EnterChessGame(Log, loggedInPlayer).postlogin();
 
         } catch (DataAccessException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Incorrect Username or Password." + RESET_TEXT_COLOR);
@@ -111,7 +115,7 @@ public class consoleLogger {
 
             String todo = scanner.nextLine().trim().toLowerCase();
             if (!todo.equals("exit")) {
-                Login();
+                login();
             }
         }
     }

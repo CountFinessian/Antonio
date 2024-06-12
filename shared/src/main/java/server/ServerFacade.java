@@ -23,34 +23,34 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public RegisterResponse createUser(RegisterRequest User) throws DataAccessException {
+    public RegisterResponse createUser(RegisterRequest user) throws DataAccessException {
         var path = "/user";
-        return this.makeRequest("POST", path, null, User, RegisterResponse.class);
+        return this.makeRequest("POST", path, null, user, RegisterResponse.class);
     }
 
-    public LoginResponse loginUser(LoginRequest User) throws DataAccessException {
+    public LoginResponse loginUser(LoginRequest user) throws DataAccessException {
         var path = "/session";
-        return this.makeRequest("POST", path, null, User, LoginResponse.class);
+        return this.makeRequest("POST", path, null, user, LoginResponse.class);
     }
 
-    public void deleteUser(String Authentication) throws DataAccessException {
+    public void deleteUser(String authentication) throws DataAccessException {
         var path = "/session";
-        this.makeRequest("DELETE", path, Authentication, null, null);
+        this.makeRequest("DELETE", path, authentication, null, null);
     }
 
-    public MakeGameResponse createGame(MakeGameRequest game, String Authentication) throws DataAccessException {
+    public MakeGameResponse createGame(MakeGameRequest game, String authentication) throws DataAccessException {
         var path = "/game";
-        return this.makeRequest("POST", path, Authentication, game, MakeGameResponse.class);
+        return this.makeRequest("POST", path, authentication, game, MakeGameResponse.class);
     }
 
-    public GetAllGamesResponse listGames(String Authentication) throws DataAccessException {
+    public GetAllGamesResponse listGames(String authentication) throws DataAccessException {
         var path = "/game";
-        return this.makeRequest("GET", path, Authentication, null, GetAllGamesResponse.class);
+        return this.makeRequest("GET", path, authentication, null, GetAllGamesResponse.class);
     }
 
-    public void joinGame(JoinGameRequest player, String Authentication) throws DataAccessException {
+    public void joinGame(JoinGameRequest player, String authentication) throws DataAccessException {
         var path = "/game";
-        this.makeRequest("PUT", path, Authentication, player, null);
+        this.makeRequest("PUT", path, authentication, player, null);
     }
 
     public void deleteDatabase() throws DataAccessException {
@@ -58,14 +58,14 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, "Blank", null, null);
     }
 
-    private <T> T makeRequest(String method, String path, String Authentication, Object request, Class<T> responseClass) throws DataAccessException {
+    private <T> T makeRequest(String method, String path, String authentication, Object request, Class<T> responseClass) throws DataAccessException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(Authentication, request, http);
+            writeBody(authentication, request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -75,9 +75,9 @@ public class ServerFacade {
     }
 
 
-    private static void writeBody(String Authentication, Object request, HttpURLConnection http) throws IOException {
-        if (Authentication != null){
-            http.setRequestProperty("Authorization", Authentication);
+    private static void writeBody(String authentication, Object request, HttpURLConnection http) throws IOException {
+        if (authentication != null){
+            http.setRequestProperty("Authorization", authentication);
         }
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
