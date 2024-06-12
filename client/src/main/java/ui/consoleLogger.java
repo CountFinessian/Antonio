@@ -74,7 +74,7 @@ public class consoleLogger {
                 RegisterResponse newplayer = facade.createUser(new_chessPerson);
                 AuthData LoggedInPlayer = new AuthData(newplayer.authToken(), newplayer.username());
                 System.out.println(STR."\{SET_TEXT_ITALIC}Registering...\{RESET_TEXT_ITALIC}");
-                quitButton = enterChessGame.PostLogin(LoggedInPlayer, Log);
+                quitButton = new enterChessGame(Log, LoggedInPlayer).PostLogin();
 
             } catch (DataAccessException e) {
                 System.out.println(STR."\{SET_TEXT_COLOR_RED}Username already taken.\{RESET_TEXT_COLOR}");
@@ -102,7 +102,7 @@ public class consoleLogger {
         try {
             LoginResponse LoggedInPlayer = facade.loginUser(chessPerson);
             AuthData loggedInPlayer = new AuthData(LoggedInPlayer.authToken(), LoggedInPlayer.username());
-            quitButton = enterChessGame.PostLogin(loggedInPlayer, Log);
+            quitButton = new enterChessGame(Log, loggedInPlayer).PostLogin();
 
         } catch (DataAccessException e) {
             System.out.println(STR."\{SET_TEXT_COLOR_RED}Incorrect Username or Password.\{RESET_TEXT_COLOR}");
