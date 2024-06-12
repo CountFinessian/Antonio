@@ -54,9 +54,11 @@ public class EnterChessGame {
                     break;
                 case "list":
                     GetAllGamesResponse games = facade.listGames(loogyinny.authToken());
+                    int listNum = 0;
                     for (GameData game : games.games()) {
+                        listNum++;
                         // Print game details here
-                        System.out.println(SET_TEXT_COLOR_YELLOW + "Game ID: " + SET_TEXT_COLOR_BLUE + game.gameID() + RESET_TEXT_COLOR);
+                        System.out.println(SET_TEXT_COLOR_YELLOW + listNum + SET_TEXT_COLOR_BLUE +  "." + RESET_TEXT_COLOR);
                         System.out.println(SET_TEXT_COLOR_YELLOW + "Game Name: " + SET_TEXT_COLOR_BLUE + game.gameName() + RESET_TEXT_COLOR);
                         System.out.println(SET_TEXT_COLOR_WHITE + "WHITE: " + SET_TEXT_COLOR_BLUE + game.whiteUsername());
                         System.out.println(SET_TEXT_COLOR_BLACK + "BLACK: " + SET_TEXT_COLOR_BLUE + game.blackUsername() + RESET_TEXT_COLOR);
@@ -105,8 +107,7 @@ public class EnterChessGame {
 
         try {
             MakeGameResponse newGame = facade.createGame(newGameRequest, loogyinny.authToken());
-            int gameID = newGame.gameID();
-            System.out.println(SET_TEXT_COLOR_YELLOW + "Game ID: " + SET_TEXT_COLOR_BLUE + gameID + RESET_TEXT_COLOR);
+            int gameID = (newGame.gameID());
         } catch (DataAccessException e) {
             // Handle exception
         }
@@ -114,9 +115,15 @@ public class EnterChessGame {
 
     private static void join() throws DataAccessException {
         try {
-            System.out.println("Please enter the Game ID.");
-            int gameID = Integer.parseInt(scanner.nextLine().trim().toLowerCase());
+            System.out.println("Please enter the game number.");
+            String gameIDInput = scanner.nextLine().trim().toLowerCase();
 
+            // Check if gameIDInput is not a number
+            if (!gameIDInput.matches("\\d+")) {
+                throw new DataAccessException("Invalid game ID: Game ID must be a number.");
+            }
+
+            int gameID = Integer.parseInt(gameIDInput);
             System.out.println("Please enter B for Black or W for White");
             String gameColorInitial = scanner.nextLine().trim().toLowerCase();
 
