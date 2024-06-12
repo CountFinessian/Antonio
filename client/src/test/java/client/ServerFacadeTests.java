@@ -9,23 +9,22 @@ import server.ServerFacade;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 public class ServerFacadeTests {
 
     private static Server server;
-   private static ServerFacade facade;
+    private static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
-        System.out.println(STR."Started test HTTP server on port \{port}");
-        String serverUrl = STR."http://localhost:\{port}";
+        System.out.println("Started test HTTP server on port " + port);
+        String serverUrl = "http://localhost:" + port;
         facade = new ServerFacade(serverUrl);
     }
 
     @BeforeEach
-            public void before() throws DataAccessException {
+    public void before() throws DataAccessException {
         facade.deleteDatabase();
     }
 
@@ -33,7 +32,6 @@ public class ServerFacadeTests {
     static void stopServer() {
         server.stop();
     }
-
 
     @Test
     public void createUserPos() throws DataAccessException {
@@ -153,6 +151,4 @@ public class ServerFacadeTests {
         var nullUser = assertThrows(DataAccessException.class, () -> facade.loginUser(newLogin));
         assertEquals("failure: 401", nullUser.getMessage());
     }
-
 }
-

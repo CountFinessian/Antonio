@@ -57,7 +57,7 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
 
-    public static final String RESET_ALL = STR."\{UNICODE_ESCAPE}[0m";
+    public static final String RESET_ALL = UNICODE_ESCAPE + "[0m";
 
     public static String moveCursorToLocation(int x, int y) {
         return UNICODE_ESCAPE + "[" + y + ";" + x + "H";
