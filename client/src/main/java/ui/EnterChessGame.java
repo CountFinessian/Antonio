@@ -105,7 +105,7 @@ public class EnterChessGame {
 
         try {
             MakeGameResponse newGame = facade.createGame(newGameRequest, loogyinny.authToken());
-            int gameID = newGame.gameID();
+            int gameID = (newGame.gameID() * 3) + 16;
             System.out.println(SET_TEXT_COLOR_YELLOW + "Game ID: " + SET_TEXT_COLOR_BLUE + gameID + RESET_TEXT_COLOR);
         } catch (DataAccessException e) {
             // Handle exception
@@ -115,7 +115,7 @@ public class EnterChessGame {
     private static void join() throws DataAccessException {
         try {
             System.out.println("Please enter the Game ID.");
-            int gameID = Integer.parseInt(scanner.nextLine().trim().toLowerCase());
+            int gameID = (Integer.parseInt(scanner.nextLine().trim().toLowerCase())-16)/3;
 
             System.out.println("Please enter B for Black or W for White");
             String gameColorInitial = scanner.nextLine().trim().toLowerCase();

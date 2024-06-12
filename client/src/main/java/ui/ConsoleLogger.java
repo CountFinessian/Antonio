@@ -53,7 +53,6 @@ public class ConsoleLogger {
                     System.out.println(SET_TEXT_COLOR_YELLOW + "login " + SET_TEXT_COLOR_BLUE + "<USERNAME> <PASSWORD>" + SET_TEXT_COLOR_YELLOW + " - to play chess," + RESET_TEXT_COLOR);
                     System.out.println(SET_TEXT_COLOR_YELLOW + "quit - playing chess," + RESET_TEXT_COLOR);
                     System.out.println(SET_TEXT_COLOR_YELLOW + "help - with possible commands." + RESET_TEXT_COLOR);
-                    System.out.println(SET_TEXT_COLOR_YELLOW + "clear - delete data." + RESET_TEXT_COLOR);
                     break;
                 default:
                     System.out.println(SET_TEXT_COLOR_RED + "Unknown command. Please try again." + RESET_TEXT_COLOR);
