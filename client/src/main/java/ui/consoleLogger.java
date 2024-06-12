@@ -24,11 +24,11 @@ public class consoleLogger {
 
             switch (input) {
                 case "clear":
-                    System.out.println(STR."\{SET_TEXT_COLOR_RED}Do you really?\{RESET_TEXT_COLOR}");
+                    System.out.println(SET_TEXT_COLOR_RED + "Do you really?" + RESET_TEXT_COLOR);
                     System.out.println("YES or NO?");
                     String deleteSequence = scanner.nextLine().trim().toLowerCase();
                     if (deleteSequence.equals("yes")) {
-                        System.out.println(STR."\{SET_TEXT_ITALIC}Deleting everything...\{RESET_TEXT_ITALIC}");
+                        System.out.println(SET_TEXT_ITALIC + "Deleting everything..." + RESET_TEXT_ITALIC);
                         facade.deleteDatabase();
                     }
                     break; // Break added here
@@ -43,15 +43,15 @@ public class consoleLogger {
                     System.out.println("Quitting...");
                     return;
                 case "help":
-                    System.out.println(STR."\{SET_TEXT_COLOR_LIGHT_GREY}[LOGGED_OUT] for help:\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}register \{SET_TEXT_COLOR_BLUE}<USERNAME> <PASSWORD> <EMAIL>\{SET_TEXT_COLOR_YELLOW} - to create an account,\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}login \{SET_TEXT_COLOR_BLUE}<USERNAME> <PASSWORD>\{SET_TEXT_COLOR_YELLOW} - to play chess,\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}quit - playing chess,\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}help - with possible commands.\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}clear - delete data.\{RESET_TEXT_COLOR}");
+                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "[LOGGED_OUT] for help:" + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "register " + SET_TEXT_COLOR_BLUE + "<USERNAME> <PASSWORD> <EMAIL>" + SET_TEXT_COLOR_YELLOW + " - to create an account," + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "login " + SET_TEXT_COLOR_BLUE + "<USERNAME> <PASSWORD>" + SET_TEXT_COLOR_YELLOW + " - to play chess," + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "quit - playing chess," + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "help - with possible commands." + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "clear - delete data." + RESET_TEXT_COLOR);
                     break;
                 default:
-                    System.out.println(STR."\{SET_TEXT_COLOR_RED}Unknown command. Please try again.\{RESET_TEXT_COLOR}");
+                    System.out.println(SET_TEXT_COLOR_RED + "Unknown command. Please try again." + RESET_TEXT_COLOR);
                     break;
             }
         }
@@ -60,30 +60,30 @@ public class consoleLogger {
     private void Register() throws DataAccessException {
         ServerFacade facade = new ServerFacade(Log);
         boolean main_menu = true;
-            System.out.println("Please enter your username.");
-            String username = scanner.nextLine();
+        System.out.println("Please enter your username.");
+        String username = scanner.nextLine();
 
-            System.out.println("Please enter your password.");
-            String password = scanner.nextLine();
+        System.out.println("Please enter your password.");
+        String password = scanner.nextLine();
 
-            System.out.println("Please enter your email.");
-            String email = scanner.nextLine();
+        System.out.println("Please enter your email.");
+        String email = scanner.nextLine();
 
-            RegisterRequest new_chessPerson = new RegisterRequest(username, password, email);
-            try {
-                RegisterResponse newplayer = facade.createUser(new_chessPerson);
-                AuthData LoggedInPlayer = new AuthData(newplayer.authToken(), newplayer.username());
-                System.out.println(STR."\{SET_TEXT_ITALIC}Registering...\{RESET_TEXT_ITALIC}");
-                quitButton = new enterChessGame(Log, LoggedInPlayer).PostLogin();
+        RegisterRequest new_chessPerson = new RegisterRequest(username, password, email);
+        try {
+            RegisterResponse newplayer = facade.createUser(new_chessPerson);
+            AuthData LoggedInPlayer = new AuthData(newplayer.authToken(), newplayer.username());
+            System.out.println(SET_TEXT_ITALIC + "Registering..." + RESET_TEXT_ITALIC);
+            quitButton = new enterChessGame(Log, LoggedInPlayer).PostLogin();
 
-            } catch (DataAccessException e) {
-                System.out.println(STR."\{SET_TEXT_COLOR_RED}Username already taken.\{RESET_TEXT_COLOR}");
-                System.out.println("Press any key to try again.");
-                System.out.println("Or type exit to go back to main menu");
+        } catch (DataAccessException e) {
+            System.out.println(SET_TEXT_COLOR_RED + "Username already taken." + RESET_TEXT_COLOR);
+            System.out.println("Press any key to try again.");
+            System.out.println("Or type exit to go back to main menu");
 
-                String todo = scanner.nextLine().trim().toLowerCase();
-                if (!todo.equals("exit")) {
-                    Register();
+            String todo = scanner.nextLine().trim().toLowerCase();
+            if (!todo.equals("exit")) {
+                Register();
             }
         }
     }
@@ -97,7 +97,7 @@ public class consoleLogger {
         String password = scanner.nextLine();
 
         LoginRequest chessPerson = new LoginRequest(username, password);
-        System.out.println(STR."\{SET_TEXT_ITALIC}Logging in...\{RESET_TEXT_ITALIC}");
+        System.out.println(SET_TEXT_ITALIC + "Logging in..." + RESET_TEXT_ITALIC);
 
         try {
             LoginResponse LoggedInPlayer = facade.loginUser(chessPerson);
@@ -105,7 +105,7 @@ public class consoleLogger {
             quitButton = new enterChessGame(Log, loggedInPlayer).PostLogin();
 
         } catch (DataAccessException e) {
-            System.out.println(STR."\{SET_TEXT_COLOR_RED}Incorrect Username or Password.\{RESET_TEXT_COLOR}");
+            System.out.println(SET_TEXT_COLOR_RED + "Incorrect Username or Password." + RESET_TEXT_COLOR);
             System.out.println("Press any key to try again.");
             System.out.println("Or type exit to go back to main menu");
 

@@ -27,8 +27,8 @@ public class enterChessGame {
     public static Boolean PostLogin() throws DataAccessException {
         boolean main_menu = true;
         while (main_menu) {
-            System.out.println(STR."\{SET_TEXT_COLOR_LIGHT_GREY}Logged in as \{loogyinny.username()}.\{RESET_TEXT_COLOR}");
-            System.out.println(STR."Please type a command to start playing.");
+            System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "Logged in as " + loogyinny.username() + "." + RESET_TEXT_COLOR);
+            System.out.println("Please type a command to start playing.");
             String input = scanner.nextLine().trim().toLowerCase();
 
             switch (input) {
@@ -38,7 +38,7 @@ public class enterChessGame {
                 case "join":
                     Join();
                     // Implementation for join
-                    //Register, then Render Game
+                    // Register, then Render Game
                     break;
                 case "observe":
                     System.out.println("Please enter the Game ID.");
@@ -50,31 +50,31 @@ public class enterChessGame {
                     GetAllGamesResponse games = facade.listGames(loogyinny.authToken());
                     for (GameData game : games.games()) {
                         // Print game details here
-                        System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}Game ID: \{SET_TEXT_COLOR_BLUE}\{game.gameID()}\{RESET_TEXT_COLOR}");
-                        System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}Game Name: \{SET_TEXT_COLOR_BLUE}\{game.gameName()}\{RESET_TEXT_COLOR}");
-                        System.out.println(STR."\{SET_TEXT_COLOR_WHITE}WHITE: \{SET_TEXT_COLOR_BLUE}\{game.whiteUsername()}");
-                        System.out.println(STR."\{SET_TEXT_COLOR_BLACK}BLACK: \{SET_TEXT_COLOR_BLUE}\{game.blackUsername()}\{RESET_TEXT_COLOR}");
+                        System.out.println(SET_TEXT_COLOR_YELLOW + "Game ID: " + SET_TEXT_COLOR_BLUE + game.gameID() + RESET_TEXT_COLOR);
+                        System.out.println(SET_TEXT_COLOR_YELLOW + "Game Name: " + SET_TEXT_COLOR_BLUE + game.gameName() + RESET_TEXT_COLOR);
+                        System.out.println(SET_TEXT_COLOR_WHITE + "WHITE: " + SET_TEXT_COLOR_BLUE + game.whiteUsername());
+                        System.out.println(SET_TEXT_COLOR_BLACK + "BLACK: " + SET_TEXT_COLOR_BLUE + game.blackUsername() + RESET_TEXT_COLOR);
                         System.out.println("-----------------------------");
                     }
                     break;
                 case "logout":
-                    System.out.println(STR."\{SET_TEXT_ITALIC}Logging out...\{RESET_TEXT_ITALIC}");
+                    System.out.println(SET_TEXT_ITALIC + "Logging out..." + RESET_TEXT_ITALIC);
                     facade.deleteUser(loogyinny.authToken());
                     return true;
                 case "quit":
                     return false;
                 case "help":
-                    System.out.println(STR."\{SET_TEXT_COLOR_LIGHT_GREY}[LOGGED_IN] for help:\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}create \{SET_TEXT_COLOR_BLUE}<NAME>\{SET_TEXT_COLOR_YELLOW} - a game,\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}join \{SET_TEXT_COLOR_BLUE}<ID> <WHITE|BLACK>\{SET_TEXT_COLOR_YELLOW} - a game\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}observe \{SET_TEXT_COLOR_BLUE}<ID>\{SET_TEXT_COLOR_YELLOW} - a game\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}list - games\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}logout - when you are done.\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}quit - playing chess.\{RESET_TEXT_COLOR}");
-                    System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}help - with possible commands.\{RESET_TEXT_COLOR}");
+                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "[LOGGED_IN] for help:" + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "create " + SET_TEXT_COLOR_BLUE + "<NAME>" + SET_TEXT_COLOR_YELLOW + " - a game," + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "join " + SET_TEXT_COLOR_BLUE + "<ID> <WHITE|BLACK>" + SET_TEXT_COLOR_YELLOW + " - a game" + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "observe " + SET_TEXT_COLOR_BLUE + "<ID>" + SET_TEXT_COLOR_YELLOW + " - a game" + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "list - games" + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "logout - when you are done." + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "quit - playing chess." + RESET_TEXT_COLOR);
+                    System.out.println(SET_TEXT_COLOR_YELLOW + "help - with possible commands." + RESET_TEXT_COLOR);
                     break;
                 default:
-                    System.out.println(STR."\{SET_TEXT_COLOR_RED}Unknown command. Please try again.\{RESET_TEXT_COLOR}");
+                    System.out.println(SET_TEXT_COLOR_RED + "Unknown command. Please try again." + RESET_TEXT_COLOR);
                     break;
             }
         }
@@ -86,7 +86,7 @@ public class enterChessGame {
         String gameName = scanner.nextLine().trim().toLowerCase();
 
         if (gameName.isEmpty()) {
-            System.out.println(STR."\{SET_TEXT_COLOR_RED}Invalid game name.\{RESET_TEXT_COLOR}");
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid game name." + RESET_TEXT_COLOR);
             System.out.println("Press any key to try again.");
             System.out.println("Or type exit to go back to main menu");
 
@@ -100,13 +100,13 @@ public class enterChessGame {
         try {
             MakeGameResponse newGame = facade.createGame(newGameRequest, loogyinny.authToken());
             int gameID = newGame.gameID();
-            System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}Game ID: \{SET_TEXT_COLOR_BLUE}\{gameID}\{RESET_TEXT_COLOR}");
+            System.out.println(SET_TEXT_COLOR_YELLOW + "Game ID: " + SET_TEXT_COLOR_BLUE + gameID + RESET_TEXT_COLOR);
         } catch (DataAccessException e) {
+            // Handle exception
         }
     }
 
     private static void Join() throws DataAccessException {
-
         try {
             System.out.println("Please enter the Game ID.");
             int gameID = Integer.parseInt(scanner.nextLine().trim().toLowerCase());
@@ -119,14 +119,14 @@ public class enterChessGame {
             } else if (gameColorInitial.equals("w")) {
                 gameColorInitial = "WHITE";
             } else {
-                throw new DataAccessException(STR."Invalid gameColorInitial: \{gameColorInitial}");
+                throw new DataAccessException("Invalid gameColorInitial: " + gameColorInitial);
             }
             JoinGameRequest playerToJoin = new JoinGameRequest(gameColorInitial, gameID);
             facade.joinGame(playerToJoin, loogyinny.authToken());
-            System.out.println(STR."\{SET_TEXT_COLOR_YELLOW}\{loogyinny.username()} \{SET_TEXT_COLOR_BLUE}joined the game!");
+            System.out.println(SET_TEXT_COLOR_YELLOW + loogyinny.username() + " " + SET_TEXT_COLOR_BLUE + "joined the game!" + RESET_TEXT_COLOR);
             Display(gameID);
         } catch (DataAccessException e) {
-            System.out.println(STR."\{SET_TEXT_COLOR_RED}Invalid game ID or Game Color or GameFull\{RESET_TEXT_COLOR}");
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID or Game Color or GameFull" + RESET_TEXT_COLOR);
             System.out.println("Press any key to try again.");
             System.out.println("Or type exit to go back to main menu");
 
@@ -148,7 +148,7 @@ public class enterChessGame {
                 return;
             }
         }
-        System.out.println(STR."\{SET_TEXT_COLOR_RED}Invalid game ID \{RESET_TEXT_COLOR}");
+        System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID " + RESET_TEXT_COLOR);
         System.out.println("Try a valid ID.");
         System.out.println("Or type exit to go back to main menu");
 
@@ -168,7 +168,7 @@ public class enterChessGame {
         System.out.println();
 
         for (int row = 8; row >= 1; row--) {
-            System.out.print(STR."\{row} ");  // Print row number on the left
+            System.out.print(row + " ");  // Print row number on the left
 
             for (int col = 1; col <= 8; col++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
@@ -213,18 +213,15 @@ public class enterChessGame {
                 System.out.print(square);
             }
 
-            System.out.print(STR." \{row}");  // Print row number on the right
+            System.out.print(" " + row);  // Print row number on the right
             System.out.println();
         }
 
         // Print the bottom border (column labels)
         System.out.print("  ");
         for (char col = 'a'; col <= 'h'; col++) {
-            System.out.print(STR."\{col}---");
+            System.out.print(col + "---");
         }
         System.out.println();
     }
-
 }
-
-
