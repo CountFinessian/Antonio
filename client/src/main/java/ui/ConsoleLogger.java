@@ -13,16 +13,16 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class ConsoleLogger {
-    private String Log = "";
+    private String log = "";
     Scanner scanner = new Scanner(System.in);
     Boolean quitButton = true;
 
     public ConsoleLogger(String serverUrl) {
-        this.Log = serverUrl;
+        this.log = serverUrl;
     }
 
     public void run() throws DataAccessException {
-        ServerFacade facade = new ServerFacade(Log);
+        ServerFacade facade = new ServerFacade(log);
         while (quitButton) {
             System.out.println("Hello, please type a command.");
             String input = scanner.nextLine().trim().toLowerCase();
@@ -63,7 +63,7 @@ public class ConsoleLogger {
     }
 
     private void register() throws DataAccessException {
-        ServerFacade facade = new ServerFacade(Log);
+        ServerFacade facade = new ServerFacade(log);
         System.out.println("Please enter your username.");
         String username = scanner.nextLine();
 
@@ -78,7 +78,7 @@ public class ConsoleLogger {
             RegisterResponse newplayer = facade.createUser(newchessperson);
             AuthData loggedinplayer = new AuthData(newplayer.authToken(), newplayer.username());
             System.out.println(SET_TEXT_ITALIC + "Registering..." + RESET_TEXT_ITALIC);
-            quitButton = new EnterChessGame(Log, loggedinplayer).postlogin();
+            quitButton = new EnterChessGame(log, loggedinplayer).postlogin();
 
         } catch (DataAccessException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Username already taken." + RESET_TEXT_COLOR);
@@ -93,7 +93,7 @@ public class ConsoleLogger {
     }
 
     private void login() throws DataAccessException {
-        ServerFacade facade = new ServerFacade(Log);
+        ServerFacade facade = new ServerFacade(log);
         System.out.println("Please enter your username.");
         String username = scanner.nextLine();
 
@@ -106,7 +106,7 @@ public class ConsoleLogger {
         try {
             LoginResponse loggedinplayer = facade.loginUser(chessPerson);
             AuthData loggedInPlayer = new AuthData(loggedinplayer.authToken(), loggedinplayer.username());
-            quitButton = new EnterChessGame(Log, loggedInPlayer).postlogin();
+            quitButton = new EnterChessGame(log, loggedInPlayer).postlogin();
 
         } catch (DataAccessException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Incorrect Username or Password." + RESET_TEXT_COLOR);
