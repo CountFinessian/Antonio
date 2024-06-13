@@ -9,26 +9,33 @@ import org.mindrot.jbcrypt.BCrypt;
 import responserequest.*;
 import service.*;
 
+import server.websocket.WebSocketHandler;
 
 import spark.*;
 import java.util.List;
 
 public class Server {
 
+    private final WebSocketHandler webSocketHandler;
     private UserService userservice;
     private GameService gameservice;
     private AuthService authservice;
+
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+        this.webSocketHandler = new webSocketHandler();
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         try {
             gameservice = new GameService(new SQLGameDAO());
             authservice = new AuthService(new SQLAuthDAO());
             userservice = new UserService(new SQLUserDAO());
-            ;
+
         } catch (exception.DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -46,6 +53,7 @@ public class Server {
         Spark.put("/game", this::joinGame);
 
         Spark.delete("/db", this::deleteDatabase);
+
         Spark.awaitInitialization();
 
         return Spark.port();
