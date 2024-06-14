@@ -21,13 +21,15 @@ public class Server {
     private GameService gameservice;
     private AuthService authservice;
 
+    public Server() {
+        this.webSocketHandler = new WebSocketHandler();
+    }
 
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
-        this.webSocketHandler = new webSocketHandler();
 
         Spark.webSocket("/ws", webSocketHandler);
 

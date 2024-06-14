@@ -47,7 +47,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void CONNNECT(String visitorName) throws IOException {
         try {
-            var action = new Action(Action.Type.ENTER, visitorName);
+            var action = new UserGameCommand(visitorName);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new IOException(ex.getMessage());
@@ -56,7 +56,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void MAKE_MOVE(String visitorName) throws IOException {
         try {
-            var action = new Action(Action.Type.ENTER, visitorName);
+            var action = new UserGameCommand(visitorName);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new IOException(ex.getMessage());
@@ -65,7 +65,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void RESIGN(String visitorName) throws IOException {
         try {
-            var action = new Action(Action.Type.ENTER, visitorName);
+            var action = new UserGameCommand(visitorName);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new IOException(ex.getMessage());
@@ -74,7 +74,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void LEAVE(String visitorName) throws IOException {
         try {
-            var action = new Action(Action.Type.EXIT, visitorName);
+            var action = new UserGameCommand(visitorName);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
             this.session.close();
         } catch (IOException ex) {
