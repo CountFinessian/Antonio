@@ -18,11 +18,11 @@ public class WebSocketFacade extends Endpoint {
     NotificationHandler notificationHandler;
 
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws DataAccessException, DataFormatException {
+    public WebSocketFacade(String url) throws DataAccessException, DataFormatException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
-            this.notificationHandler = notificationHandler;
+            notificationHandler = new NotificationHandler();
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -47,7 +47,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void CONNNECT(String visitorName) throws IOException {
         try {
-            var action = new UserGameCommand(visitorName);
+            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.CONNECT, 5);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new IOException(ex.getMessage());
@@ -56,7 +56,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void MAKE_MOVE(String visitorName) throws IOException {
         try {
-            var action = new UserGameCommand(visitorName);
+            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.MAKE_MOVE, 5);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new IOException(ex.getMessage());
@@ -65,7 +65,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void RESIGN(String visitorName) throws IOException {
         try {
-            var action = new UserGameCommand(visitorName);
+            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.RESIGN, 5);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new IOException(ex.getMessage());
@@ -74,7 +74,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void LEAVE(String visitorName) throws IOException {
         try {
-            var action = new UserGameCommand(visitorName);
+            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.LEAVE, 5);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
             this.session.close();
         } catch (IOException ex) {

@@ -8,7 +8,9 @@ import responserequest.RegisterRequest;
 import responserequest.RegisterResponse;
 import server.ServerFacade;
 
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
 
 import static ui.EscapeSequences.*;
 
@@ -92,6 +94,10 @@ public class ConsoleLogger {
             if (!todo.equals("exit")) {
                 register();
             }
+        } catch (DataFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -111,7 +117,7 @@ public class ConsoleLogger {
             AuthData loggedInPlayer = new AuthData(loggedinplayer.authToken(), loggedinplayer.username());
             quitButton = new EnterChessGame(log, loggedInPlayer).postlogin();
 
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | DataFormatException | IOException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Incorrect Username or Password." + RESET_TEXT_COLOR);
             System.out.println("Press any key to try again.");
             System.out.println("Or type exit to go back to main menu");

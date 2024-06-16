@@ -13,15 +13,17 @@ import responserequest.MakeGameRequest;
 import responserequest.MakeGameResponse;
 import server.ServerFacade;
 
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
 
 import static ui.EscapeSequences.*;
-
 public class EnterChessGame {
     private static Scanner scanner;
-    private String url;
+    private static String url;
     private static ServerFacade facade;
     private static AuthData loogyinny;
+    private static GamePlay gameplayui;
 
     public EnterChessGame(String url, AuthData loggyinny) {
         this.url = url;
@@ -30,7 +32,7 @@ public class EnterChessGame {
         this.facade = new ServerFacade(url);
     }
 
-    public static Boolean postlogin() throws DataAccessException {
+    public static Boolean postlogin() throws DataAccessException, DataFormatException, IOException {
         boolean mainmenu = true;
         while (mainmenu) {
             System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "Logged in as " + loogyinny.username() + "." + RESET_TEXT_COLOR);
@@ -49,7 +51,8 @@ public class EnterChessGame {
                 case "observe":
                     System.out.println("Please enter the Game ID.");
                     int gameID = Integer.parseInt(scanner.nextLine().trim().toLowerCase());
-                    display(gameID);
+                    gameplayui = new GamePlay(url, loogyinny, gameID, true);
+                    gameplayui.display();
                     // Render Game
                     break;
                 case "list":
@@ -137,7 +140,9 @@ public class EnterChessGame {
             JoinGameRequest playerToJoin = new JoinGameRequest(gameColorInitial, gameID);
             facade.joinGame(playerToJoin, loogyinny.authToken());
             System.out.println(SET_TEXT_COLOR_YELLOW + loogyinny.username() + " " + SET_TEXT_COLOR_BLUE + "joined the game!" + RESET_TEXT_COLOR);
-            display(gameID);
+
+            gameplayui = new GamePlay(url, loogyinny, gameID, false);
+            gameplayui.display();
         } catch (DataAccessException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID or Game Color or GameFull" + RESET_TEXT_COLOR);
             System.out.println("Press any key to try again.");
@@ -147,94 +152,10 @@ public class EnterChessGame {
             if (!todo.equals("exit")) {
                 join();
             }
+        } catch (DataFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    private static void display(int gameID) throws DataAccessException {
-        GameData theGame;
-        GetAllGamesResponse games = facade.listGames(loogyinny.authToken());
-        for (GameData game : games.games()) {
-            if (game.gameID() == gameID) {
-                theGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
-                theGame.game().boardRefill();
-                displayboard(theGame.game().getBoard());
-                return;
-            }
-        }
-        System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID " + RESET_TEXT_COLOR);
-        System.out.println("Try a valid ID.");
-        System.out.println("Or type exit to go back to main menu");
-
-        String todo = scanner.nextLine().trim().toLowerCase();
-        if (!todo.equals("exit")) {
-            display(gameID);
-        }
-    }
-
-    private static void displayboard(ChessBoard board) {
-        // Print the top border (column labels)
-        System.out.print("  ");
-        for (char col = 'a'; col <= 'h'; col++) {
-            System.out.print(col);
-            System.out.print("---");
-        }
-        System.out.println();
-
-        for (int row = 8; row >= 1; row--) {
-            System.out.print(row + " ");  // Print row number on the left
-
-            for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
-                String square;
-                if (piece == null) {
-                    // Checkered pattern for board background
-                    if ((row + col) % 2 == 0) {
-                        square = SET_BG_COLOR_LIGHT_GREY + EMPTY + RESET_ALL;
-                    } else {
-                        square = SET_BG_COLOR_BLACK + EMPTY + RESET_ALL;
-                    }
-                } else {
-                    String pieceString;
-                    switch (piece.getPieceType()) {
-                        case PAWN:
-                            pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
-                            break;
-                        case ROOK:
-                            pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_ROOK : BLACK_ROOK;
-                            break;
-                        case KNIGHT:
-                            pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
-                            break;
-                        case BISHOP:
-                            pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_BISHOP : BLACK_BISHOP;
-                            break;
-                        case QUEEN:
-                            pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_QUEEN : BLACK_QUEEN;
-                            break;
-                        case KING:
-                            pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_KING : BLACK_KING;
-                            break;
-                        default:
-                            pieceString = EMPTY;
-                    }
-                    if ((row + col) % 2 == 0) {
-                        square = SET_BG_COLOR_LIGHT_GREY + pieceString + RESET_ALL;
-                    } else {
-                        square = SET_BG_COLOR_BLACK + pieceString + RESET_ALL;
-                    }
-                }
-                System.out.print(square);
-            }
-
-            System.out.print(" " + row);  // Print row number on the right
-            System.out.println();
-        }
-
-        // Print the bottom border (column labels)
-        System.out.print("  ");
-        for (char col = 'a'; col <= 'h'; col++) {
-            System.out.print(col + "---");
-        }
-        System.out.println();
     }
 }
