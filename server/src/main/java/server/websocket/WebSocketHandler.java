@@ -28,7 +28,7 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthString(), command.getGameID(), session);
             case MAKE_MOVE -> make_move(command.getAuthString(), command.getGameID(), session, command.getMove());
-//            case LEAVE -> enter(command.getAuthString(), session);
+            case LEAVE -> leave(command.getAuthString(), session);
 //            case RESIGN -> enter(command.getAuthString(), session);
         }
     }
@@ -53,17 +53,17 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, theGame);
         broadcast(theGame.gameID(), session, notification);
     }
-//
-//    public void leave(String petName, String sound) throws DataAccessException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-//            broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new DataAccessException(ex.getMessage());
-//        }
-//    }
-//
+
+    public void leave(String petName, String sound) throws DataAccessException {
+        try {
+            var message = String.format("%s says %s", petName, sound);
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            broadcast("", notification);
+        } catch (Exception ex) {
+            throw new DataAccessException(ex.getMessage());
+        }
+    }
+
 //    public void resign(String petName, String sound) throws DataAccessException {
 //        try {
 //            var message = String.format("%s says %s", petName, sound);

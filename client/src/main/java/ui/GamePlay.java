@@ -9,6 +9,7 @@ import server.ServerFacade;
 import ui.websocket.WebSocketFacade;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
@@ -49,12 +50,11 @@ public class GamePlay {
         System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID " + RESET_TEXT_COLOR);
     }
 
-    public void displayboard(ChessBoard board) {
+    public void displayboard(ChessBoard board, Collection<ChessMove> highlightPositions) {
         // Print the top border (column labels)
         System.out.print("  ");
         for (char col = 'a'; col <= 'h'; col++) {
-            System.out.print(col);
-            System.out.print("---");
+            System.out.print(col + "---");
         }
         System.out.println();
 
@@ -62,8 +62,10 @@ public class GamePlay {
             System.out.print(row + " ");  // Print row number on the left
 
             for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                ChessPosition currentPos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(currentPos);
                 String square;
+
                 if (piece == null) {
                     // Checkered pattern for board background
                     if ((row + col) % 2 == 0) {
@@ -101,6 +103,12 @@ public class GamePlay {
                         square = SET_BG_COLOR_BLACK + pieceString + RESET_ALL;
                     }
                 }
+
+                // Highlight positions if they are in the set
+                if (highlightPositions != null && highlightPositions.contains(currentPos)) {
+                    square = SET_BG_COLOR_GREEN + square + RESET_ALL;
+                }
+
                 System.out.print(square);
             }
 
@@ -128,11 +136,10 @@ public class GamePlay {
 
             switch (input) {
                 case "redraw":
-                    displayboard(theGame.game().getBoard());
+                    displayboard(theGame.game().getBoard(), null);
                     break;
                 case "leave":
-                    // Call a method to handle sign-in logic
-                    //colored username is false.
+                    websocketfacade.LEAVE(loogyinny.username(), theGame);
                     stay = false;
                     break;
                 case "move":
@@ -152,7 +159,7 @@ public class GamePlay {
                             try {
                                 theGame.game().makeMove(move);
                                 websocketfacade.MAKE_MOVE(move, theGame, loogyinny.username());
-                                displayboard(theGame.game().getBoard());
+
                             } catch (InvalidMoveException e) {
                                 System.out.println("invalid move.");
                             }
@@ -161,12 +168,15 @@ public class GamePlay {
                     System.out.println("There are not enough people in the game.");
 
                 case "highlight":
-                    System.out.println("Quitting...");
-                    System.out.println("Please enter the coordinates of the piece you'd like to move in coordinate notion.");
-                    ChessPosition starting = parsePosition(scanner.nextLine().trim().toLowerCase());
-                    theGame.game().validMoves(starting);
-
-                    displayboard(theGame.game().getBoard());
+                    System.out.println("Please enter the coordinates of the piece you'd like to highlight in coordinate notation.");
+                    ChessPosition highlightPosition = parsePosition(scanner.nextLine().trim().toLowerCase());
+                    Collection<ChessMove> validMoves = theGame.game().validMoves(highlightPosition);
+                    if (validMoves == null || validMoves.isEmpty()) {
+                        System.out.println("No valid moves for the selected piece.");
+                    } else {
+                        displayboard(theGame.game().getBoard(), validMoves);
+                    }
+                    break;
 
 
                 case "resign":

@@ -32,7 +32,7 @@ public class NotificationHandler {
     public void HandleLoadGame(ServerMessage loadGameMsg) throws IOException, InvalidMoveException {
         String output = loadGameMsg.getMessage();
         System.out.println(output);
-        game.displayboard(loadGameMsg.getGameData().game().getBoard());
+        game.displayboard(loadGameMsg.getGameData().game().getBoard(), null);
     }
 
     public void HandleError(ServerMessage errorMsg) {}

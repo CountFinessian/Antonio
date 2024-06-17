@@ -83,15 +83,15 @@ public class WebSocketFacade extends Endpoint {
 //        }
 //    }
 //
-//    public void LEAVE(String visitorName) throws IOException {
-//        try {
-//            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.LEAVE, 5);
-//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//            this.session.close();
-//        } catch (IOException ex) {
-//            throw new IOException(ex.getMessage());
-//        }
-//    }
+    public void LEAVE(String visitorName, GameData theGame) throws IOException {
+        try {
+            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.LEAVE, theGame, null);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            this.session.close();
+        } catch (IOException ex) {
+            throw new IOException(ex.getMessage());
+        }
+    }
 
 }
 
