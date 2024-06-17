@@ -1,7 +1,8 @@
 package server.websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
-import exception.DataAccessException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -10,57 +11,78 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 
 
 @WebSocket
 public class WebSocketHandler {
 
-   Map<Integer, Set<Session>> connections = new HashMap<>();
+    private Map<Integer, Set<Session>> connections = new HashMap<>();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case CONNECT -> connnect(command.getGameID(), session);
-//            case MAKE_MOVE -> enter(command.getAuthString(), session);
+            case CONNECT -> connect(command.getAuthString(), command.getGameID(), session);
+            case MAKE_MOVE -> make_move(command.getAuthString(), command.getGameID(), session, command.getMove());
 //            case LEAVE -> enter(command.getAuthString(), session);
 //            case RESIGN -> enter(command.getAuthString(), session);
         }
     }
 
-    private void connect(int gameID, Session session) throws IOException {
-        connections.put(gameID, (Set<Session>) session);
-        //send the message.
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(visitorName, notification);
+    private void connect(String username, GameData theGame, Session session) throws IOException {
+        connections.computeIfAbsent(theGame.gameID(), k -> new HashSet<>()).add(session);
+
+
+        var loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, theGame.gameName(), theGame);
+        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+        String notif = new String ( username  + "joined the game!" );;
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, notif, null);
+        broadcast(theGame.gameID(), session, notification);
     }
 
-    private void make_move(String visitorName) throws IOException {
-        connections.remove(visitorName);
-        var message = String.format("%s left the shop", visitorName);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(visitorName, notification);
-    }
+    private void make_move(String username, GameData theGame, Session session, ChessMove Move) throws IOException {
+        var loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, theGame.gameName(), theGame);
+        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+        broadcast(theGame.gameID(), session, loadGameMessage);
 
-    public void leave(String petName, String sound) throws DataAccessException {
-        try {
-            var message = String.format("%s says %s", petName, sound);
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-            connections.broadcast("", notification);
-        } catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
+        var message = String.format(username + "made move" + Move);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, theGame);
+        broadcast(theGame.gameID(), session, notification);
     }
+//
+//    public void leave(String petName, String sound) throws DataAccessException {
+//        try {
+//            var message = String.format("%s says %s", petName, sound);
+//            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+//            broadcast("", notification);
+//        } catch (Exception ex) {
+//            throw new DataAccessException(ex.getMessage());
+//        }
+//    }
+//
+//    public void resign(String petName, String sound) throws DataAccessException {
+//        try {
+//            var message = String.format("%s says %s", petName, sound);
+//            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+//            broadcast("", notification);
+//        } catch (Exception ex) {
+//            throw new DataAccessException(ex.getMessage());
+//        }
+//    }
 
-    public void resign(String petName, String sound) throws DataAccessException {
-        try {
-            var message = String.format("%s says %s", petName, sound);
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-            connections.broadcast("", notification);
-        } catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage());
+    private void broadcast(int gameID, Session rootClientSession, ServerMessage notification) throws IOException {
+        Set<Session> sessions = connections.get(gameID);
+        if (sessions != null) {
+            String message = new Gson().toJson(notification);
+            for (Session s : sessions) {
+                if (s.isOpen() && !s.equals(rootClientSession)) {
+                    s.getRemote().sendString(message);
+                }
+            }
         }
     }
 }

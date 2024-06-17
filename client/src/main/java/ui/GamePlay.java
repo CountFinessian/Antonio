@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import exception.DataAccessException;
 import model.AuthData;
 import model.GameData;
@@ -25,6 +22,7 @@ public class GamePlay {
     int gameID;
     boolean observer;
     WebSocketFacade websocketfacade;
+    public GameData theGame;
 
     public GamePlay (String url, AuthData loggyinny, int gameID, boolean observer) throws DataFormatException, DataAccessException {
         this.url = url;
@@ -34,16 +32,17 @@ public class GamePlay {
         this.gameID = gameID;
         this.observer = observer;
 
-        this.websocketfacade = new WebSocketFacade(url);
+        this.websocketfacade = new WebSocketFacade(url, this);
 
     }
-    public void display() throws DataAccessException, IOException {
-        GameData theGame;
+    public void display() throws DataAccessException, IOException, InvalidMoveException {
         GetAllGamesResponse games = facade.listGames(loogyinny.authToken());
         for (GameData game : games.games()) {
             if (game.gameID() == gameID) {
                 theGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
-                theGame(theGame);
+                theGame.game().boardRefill();
+                ConnectToWebSocketGame();
+                StartGamePlay();
                 return;
             }
         }
@@ -117,10 +116,12 @@ public class GamePlay {
         System.out.println();
     }
 
-    public void theGame(GameData theGame) throws IOException {
+    public void ConnectToWebSocketGame() throws IOException {
+        websocketfacade.CONNNECT(loogyinny.username(), theGame);
+    }
+
+    public void StartGamePlay() throws IOException, InvalidMoveException {
         Boolean stay = true;
-        websocketfacade.CONNNECT(loogyinny.username());
-        theGame.game().boardRefill();
         while (stay) {
             System.out.println("You are in the game, please type a command.");
             String input = scanner.nextLine().trim().toLowerCase();
@@ -135,9 +136,39 @@ public class GamePlay {
                     stay = false;
                     break;
                 case "move":
-                    break;
+                    if (theGame.blackUsername() != null && theGame.whiteUsername() != null) {
+                        //white could move for black.
+                        //getGameData().game().getBoard()
+                        System.out.println("Please enter the coordinates of the piece you'd like to move in coordinate notion.");
+                        ChessPosition starting = parsePosition(scanner.nextLine().trim().toLowerCase());
+                        System.out.println("Please enter the coordinates of where'd you like to go with it.");
+                        ChessPosition ending = parsePosition(scanner.nextLine().trim().toLowerCase());
+                        System.out.println("Please enter a promotion piece");
+                        ChessPiece.PieceType pp = parsePromotionPiece(scanner.nextLine().trim().toLowerCase());
+
+                        if (theGame.game().validMoves(starting).contains(ending)){
+
+                            ChessMove move = new ChessMove(starting, ending, pp);
+                            try {
+                                theGame.game().makeMove(move);
+                                websocketfacade.MAKE_MOVE(move, theGame, loogyinny.username());
+                                displayboard(theGame.game().getBoard());
+                            } catch (InvalidMoveException e) {
+                                System.out.println("invalid move.");
+                            }
+                        }
+                    }
+                    System.out.println("There are not enough people in the game.");
+
                 case "highlight":
                     System.out.println("Quitting...");
+                    System.out.println("Please enter the coordinates of the piece you'd like to move in coordinate notion.");
+                    ChessPosition starting = parsePosition(scanner.nextLine().trim().toLowerCase());
+                    theGame.game().validMoves(starting);
+
+                    displayboard(theGame.game().getBoard());
+
+
                 case "resign":
                     return;
                 case "help":
@@ -155,4 +186,23 @@ public class GamePlay {
             }
         }
     }
+
+    private ChessPosition parsePosition(String input) {
+        input = input.replaceAll("[(),]", "").trim(); // Remove parentheses and commas
+        char col = input.charAt(0);
+        int row = Character.getNumericValue(input.charAt(1));
+        return new ChessPosition(row, col - 'a' + 1);
+    }
+
+    private ChessPiece.PieceType parsePromotionPiece(String input) {
+        switch (input) {
+            case "q": return ChessPiece.PieceType.QUEEN;
+            case "r": return ChessPiece.PieceType.ROOK;
+            case "b": return ChessPiece.PieceType.BISHOP;
+            case "n": return ChessPiece.PieceType.KNIGHT;
+            default: return null; // No promotion
+        }
+    }
+
+
 }

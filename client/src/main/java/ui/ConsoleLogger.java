@@ -1,5 +1,6 @@
 package ui;
 
+import chess.InvalidMoveException;
 import exception.DataAccessException;
 import model.AuthData;
 import responserequest.LoginRequest;
@@ -98,6 +99,8 @@ public class ConsoleLogger {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -126,6 +129,8 @@ public class ConsoleLogger {
             if (!todo.equals("exit")) {
                 login();
             }
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
         }
     }
 }

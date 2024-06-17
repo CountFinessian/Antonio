@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import exception.DataAccessException;
 import model.AuthData;
 import model.GameData;
@@ -32,7 +29,7 @@ public class EnterChessGame {
         this.facade = new ServerFacade(url);
     }
 
-    public static Boolean postlogin() throws DataAccessException, DataFormatException, IOException {
+    public static Boolean postlogin() throws DataAccessException, DataFormatException, IOException, InvalidMoveException {
         boolean mainmenu = true;
         while (mainmenu) {
             System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "Logged in as " + loogyinny.username() + "." + RESET_TEXT_COLOR);
@@ -155,6 +152,8 @@ public class EnterChessGame {
         } catch (DataFormatException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidMoveException e) {
             throw new RuntimeException(e);
         }
     }

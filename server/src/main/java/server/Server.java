@@ -31,7 +31,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.webSocket("/ws", webSocketHandler);
+        Spark.webSocket("/connect", webSocketHandler);
 
         try {
             gameservice = new GameService(new SQLGameDAO());
