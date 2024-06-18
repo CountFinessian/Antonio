@@ -74,15 +74,6 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-//    public void RESIGN(String visitorName) throws IOException {
-//        try {
-//            var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.RESIGN, 5);
-//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//        } catch (IOException ex) {
-//            throw new IOException(ex.getMessage());
-//        }
-//    }
-//
     public void leave(String visitorName, GameData theGame) throws IOException {
         try {
             var action = new UserGameCommand(visitorName, UserGameCommand.CommandType.LEAVE, theGame, null);
