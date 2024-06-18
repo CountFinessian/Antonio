@@ -44,8 +44,8 @@ public class GamePlay {
             if (game.gameID() == gameID) {
                 theGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
                 theGame.game().boardRefill();
-                ConnectToWebSocketGame();
-                StartGamePlay();
+                connectToWebSocketGame();
+                startGamePlay();
                 return;
             }
         }
@@ -127,11 +127,11 @@ public class GamePlay {
         System.out.println();
     }
 
-    public void ConnectToWebSocketGame() throws IOException {
-        websocketfacade.CONNNECT(loogyinny.username(), theGame);
+    public void connectToWebSocketGame() throws IOException {
+        websocketfacade.connect(loogyinny.username(), theGame);
     }
 
-    public void StartGamePlay() throws IOException, InvalidMoveException {
+    public void startGamePlay() throws IOException, InvalidMoveException {
         Boolean stay = true;
         while (stay) {
             System.out.println("You are in the game, please type a command.");
@@ -161,7 +161,7 @@ public class GamePlay {
 
                             try {
                                 theGame.game().makeMove(move);
-                                websocketfacade.MAKE_MOVE(move, theGame, loogyinny.username());
+                                websocketfacade.makeMove(move, theGame, loogyinny.username());
 
                             } catch (InvalidMoveException e) {
                                 System.out.println("invalid move.");

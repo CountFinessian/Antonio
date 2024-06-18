@@ -27,7 +27,7 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthString(), command.getGameID(), session);
-            case MAKE_MOVE -> make_move(command.getAuthString(), command.getGameID(), session, command.getMove());
+            case MAKE_MOVE -> makeMove(command.getAuthString(), command.getGameID(), session, command.getMove());
 //            case LEAVE -> leave(command.getAuthString(), session);
 //            case RESIGN -> enter(command.getAuthString(), session);
         }
@@ -44,12 +44,12 @@ public class WebSocketHandler {
         broadcast(theGame.gameID(), session, notification);
     }
 
-    private void make_move(String username, GameData theGame, Session session, ChessMove Move) throws IOException {
+    private void makeMove(String username, GameData theGame, Session session, ChessMove move) throws IOException {
         var loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, theGame.gameName(), theGame);
         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
         broadcast(theGame.gameID(), session, loadGameMessage);
 
-        var message = String.format(username + "made move" + Move);
+        var message = String.format(username + "made move" + move);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, theGame);
         broadcast(theGame.gameID(), session, notification);
     }
