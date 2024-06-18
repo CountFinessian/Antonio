@@ -20,9 +20,6 @@ public class ServerMessage {
     String label;
     GameData gameData;
 
-    // TODO add chess game as field here, will normally be null except for LOAD_GAME will actually have a value for it
-
-
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,

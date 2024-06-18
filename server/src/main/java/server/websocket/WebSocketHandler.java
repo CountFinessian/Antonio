@@ -54,25 +54,6 @@ public class WebSocketHandler {
         broadcast(theGame.gameID(), session, notification);
     }
 
-//    public void leave(String petName, String sound) throws DataAccessException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-//            broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new DataAccessException(ex.getMessage());
-//        }
-//    }
-
-//    public void resign(String petName, String sound) throws DataAccessException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-//            broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new DataAccessException(ex.getMessage());
-//        }
-//    }
 
     private void broadcast(int gameID, Session rootClientSession, ServerMessage notification) throws IOException {
         Set<Session> sessions = connections.get(gameID);

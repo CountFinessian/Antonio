@@ -38,7 +38,7 @@ public class WebSocketFacade extends Endpoint {
                 public void onMessage(String message) {
                     ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
                     try {
-                        notificationHandler.RouteMessages(msg);
+                        notificationHandler.routeMessages(msg);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     } catch (InvalidMoveException e) {

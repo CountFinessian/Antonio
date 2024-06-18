@@ -15,7 +15,7 @@ public class NotificationHandler {
         this.game = game;
     }
 
-    public void RouteMessages(ServerMessage msg) throws IOException, InvalidMoveException {
+    public void routeMessages(ServerMessage msg) throws IOException, InvalidMoveException {
         // Check if the server message type is LOAD_GAME
         if (msg.serverMessageType == ServerMessage.ServerMessageType.LOAD_GAME) {
             handleLoadGame(msg);
