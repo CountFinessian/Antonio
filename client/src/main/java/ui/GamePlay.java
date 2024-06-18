@@ -11,6 +11,8 @@ import ui.websocket.WebSocketFacade;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 import static ui.EscapeSequences.*;
@@ -47,10 +49,10 @@ public class GamePlay {
                 return;
             }
         }
-        System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID " + RESET_TEXT_COLOR);
+//        System.out.println(SET_TEXT_COLOR_RED + "Invalid game ID " + RESET_TEXT_COLOR);
     }
 
-    public void displayboard(ChessBoard board, Collection<ChessMove> highlightPositions) {
+    public void displayboard(ChessBoard board, Collection<ChessPosition> highlightPositions) {
         // Print the top border (column labels)
         System.out.print("  ");
         for (char col = 'a'; col <= 'h'; col++) {
@@ -65,8 +67,10 @@ public class GamePlay {
                 ChessPosition currentPos = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(currentPos);
                 String square;
+                String pieceString;
 
                 if (piece == null) {
+                    pieceString = EMPTY;
                     // Checkered pattern for board background
                     if ((row + col) % 2 == 0) {
                         square = SET_BG_COLOR_LIGHT_GREY + EMPTY + RESET_ALL;
@@ -74,7 +78,6 @@ public class GamePlay {
                         square = SET_BG_COLOR_BLACK + EMPTY + RESET_ALL;
                     }
                 } else {
-                    String pieceString;
                     switch (piece.getPieceType()) {
                         case PAWN:
                             pieceString = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
@@ -106,7 +109,7 @@ public class GamePlay {
 
                 // Highlight positions if they are in the set
                 if (highlightPositions != null && highlightPositions.contains(currentPos)) {
-                    square = SET_BG_COLOR_GREEN + square + RESET_ALL;
+                    square = SET_BG_COLOR_GREEN + pieceString + RESET_ALL;
                 }
 
                 System.out.print(square);
@@ -139,11 +142,10 @@ public class GamePlay {
                     displayboard(theGame.game().getBoard(), null);
                     break;
                 case "leave":
-                    websocketfacade.LEAVE(loogyinny.username(), theGame);
-                    stay = false;
-                    break;
+                    return;
                 case "move":
-                    if (theGame.blackUsername() != null && theGame.whiteUsername() != null) {
+                    if (theGame.blackUsername() != null && theGame.whiteUsername() != null && !observer) {
+
                         //white could move for black.
                         //getGameData().game().getBoard()
                         System.out.println("Please enter the coordinates of the piece you'd like to move in coordinate notion.");
@@ -153,9 +155,10 @@ public class GamePlay {
                         System.out.println("Please enter a promotion piece");
                         ChessPiece.PieceType pp = parsePromotionPiece(scanner.nextLine().trim().toLowerCase());
 
-                        if (theGame.game().validMoves(starting).contains(ending)){
+                        ChessMove move = new ChessMove(starting, ending, pp);
 
-                            ChessMove move = new ChessMove(starting, ending, pp);
+                        if (theGame.game().validMoves(starting).contains(move)){
+
                             try {
                                 theGame.game().makeMove(move);
                                 websocketfacade.MAKE_MOVE(move, theGame, loogyinny.username());
@@ -165,22 +168,33 @@ public class GamePlay {
                             }
                         }
                     }
-                    System.out.println("There are not enough people in the game.");
+
+                    else {
+                        System.out.println("There are not enough people in the game.");
+                    }
+
+                    break;
 
                 case "highlight":
                     System.out.println("Please enter the coordinates of the piece you'd like to highlight in coordinate notation.");
                     ChessPosition highlightPosition = parsePosition(scanner.nextLine().trim().toLowerCase());
                     Collection<ChessMove> validMoves = theGame.game().validMoves(highlightPosition);
-                    if (validMoves == null || validMoves.isEmpty()) {
+                    Set<ChessPosition> validPositions = validMoves.stream()
+                            .map(ChessMove::getEndPosition)
+                            .collect(Collectors.toSet());
+
+
+                    if (validPositions == null || validPositions.isEmpty()) {
                         System.out.println("No valid moves for the selected piece.");
                     } else {
-                        displayboard(theGame.game().getBoard(), validMoves);
+                        displayboard(theGame.game().getBoard(), validPositions);
                     }
                     break;
 
 
                 case "resign":
-                    return;
+                    stay = false;
+                    break;
                 case "help":
                     System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "[IN_GAME] for help:" + RESET_TEXT_COLOR);
                     System.out.println(SET_TEXT_COLOR_YELLOW + "help " + SET_TEXT_COLOR_BLUE + "Displays text informing the user what actions they can take." + RESET_TEXT_COLOR);

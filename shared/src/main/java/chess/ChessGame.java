@@ -53,7 +53,7 @@ public class ChessGame {
      * If there is no piece at that location, this method returns null.
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        boardRefill();
+//        boardRefill();
 //        game, turn
         if (game.getPiece(startPosition) == null) {
             return null;
